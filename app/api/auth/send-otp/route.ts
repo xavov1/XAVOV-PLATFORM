@@ -1,41 +1,20 @@
 import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
+import { PrismaClient } from "@prisma/client"
 
-function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString()
-}
+const prisma = new PrismaClient()
 
 export async function POST(req: Request) {
-  try {
-    const body = await req.json()
-    const { identifier } = body
+  const { identifier, code } = await req.json()
 
-    if (!identifier) {
-      return NextResponse.json(
-        { error: "Identifier required" },
-        { status: 400 }
-      )
-    }
+  const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
 
-    const code = generateOTP()
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
+  await prisma.oTP.create({
+    data: {
+      identifier,
+      code,
+      expiresAt,
+    },
+  })
 
-    await prisma.OTP.create({
-      data: {
-        identifier,
-        code,
-        expiresAt
-      }
-    })
-
-    return NextResponse.json({
-      message: "OTP sent",
-      code
-    })
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    )
-  }
+  return NextResponse.json({ success: true })
 }

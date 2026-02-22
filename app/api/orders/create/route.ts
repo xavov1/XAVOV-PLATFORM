@@ -1,34 +1,17 @@
 import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
+import { PrismaClient } from "@prisma/client"
 
-export async function POST(req: Request) {
-  try {
-    const { userId, totalAmount, location, latitude, longitude } = await req.json()
+const prisma = new PrismaClient()
 
-    if (!userId || !totalAmount || !location) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
-      )
-    }
+export async function POST(request: Request) {
+  const { total } = await request.json()
 
-    const order = await prisma.order.create({
-      data: {
-        userId: Number(userId),
-        totalAmount: Number(totalAmount),
-        status: "PENDING_PAYMENT",
-        location,
-        latitude: latitude ? Number(latitude) : null,
-        longitude: longitude ? Number(longitude) : null
-      }
-    })
+  const order = await prisma.order.create({
+    data: {
+      total: Number(total), // 👈 الاسم الصحيح
+      status: "PENDING_PAYMENT",
+    },
+  })
 
-    return NextResponse.json(order)
-
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    )
-  }
+  return NextResponse.json(order)
 }
