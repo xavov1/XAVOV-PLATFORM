@@ -1,98 +1,46 @@
-import Link from "next/link";
-
 export default function MarketplacePage() {
-  const categories = [
-    {
-      title: "الأجهزة الذكية وملحقاتها",
-      href: "/marketplace/electronics",
-    },
-    {
-      title: "الأجهزة المنزلية والطبية وملحقاتها",
-      href: "/marketplace/home-appliances",
-    },
-    {
-      title: "الأدوات الصناعية والزراعية",
-      href: "/marketplace/industrial-agriculture",
-    },
-    {
-      title: "الإلكترونيات العامة",
-      href: "/marketplace/electronics",
-    },
-    {
-      title: "الألعاب والترفيه",
-      href: "/marketplace/gaming",
-    },
-    {
-      title: "قطع غيار السيارات والإكسسوارات",
-      href: "/marketplace/car-parts",
-    },
-    {
-      title: "العروض والصفقات",
-      href: "/marketplace/deals",
-    },
+  const trunks = [
+    { code: "A", title: "الأجهزة الذكية وملحقاتها" },
+    { code: "B", title: "الأجهزة المنزلية والطبية وملحقاتها" },
+    { code: "C", title: "الأدوات الصناعية والزراعية" },
+    { code: "D", title: "الإلكترونيات العامة" },
+    { code: "G", title: "الألعاب والترفيه" },
+    { code: "F", title: "قطع غيار السيارات والإكسسوارات" },
+    { code: "E", title: "العروض والصفقات" },
   ];
 
   return (
-    <main
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg,#000,#0b0b0b)",
-        padding: "80px 40px",
-        color: "#fff",
-      }}
-    >
-      {/* الشعار */}
-      <div style={{ textAlign: "center", marginBottom: "60px" }}>
-        <h1
-          style={{
-            fontSize: "56px",
-            fontWeight: "900",
-            letterSpacing: "4px",
-            background: "linear-gradient(90deg,#d4af37,#f5d76e)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          XAVOV
-        </h1>
-        <p style={{ opacity: 0.6, marginTop: "10px" }}>
-          المنتجات
-        </p>
-      </div>
+    <main className="xv">
+      <div className="xv-bg" />
+      <div className="xv-grid" />
+      <div className="xv-dust" />
 
-      {/* الأقسام */}
-      <section
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))",
-          gap: "24px",
-          maxWidth: "1100px",
-          margin: "0 auto",
-        }}
-      >
-        {categories.map((cat) => (
-          <Link
-            key={cat.title}
-            href={cat.href}
-            style={{ textDecoration: "none" }}
-          >
-            <div
-              style={{
-                padding: "28px",
-                borderRadius: "14px",
-                border: "1px solid rgba(212,175,55,0.4)",
-                background: "#0f0f0f",
-                textAlign: "center",
-                cursor: "pointer",
-                transition: "0.2s",
-              }}
-            >
-              <h3 style={{ fontSize: "18px", color: "#fff" }}>
-                {cat.title}
-              </h3>
-            </div>
-          </Link>
-        ))}
+      <section className="xv-frame">
+        <header className="xv-header">
+          <div className="xv-brand">XAVOV</div>
+          <div className="xv-tagline">Innovate. Connect. Succeed.</div>
+
+          <div className="xv-subTitle">DISCOVER PRODUCTS</div>
+          <p className="xv-subText">
+            بوابة المنتجات الرسمية — اختر الجذع للدخول إلى أقسام XAVOV.
+          </p>
+        </header>
+
+        <div className="xv-cards">
+          {trunks.map((t) => (
+            <a key={t.code} href="#" className="xv-card">
+              <div className="xv-icon">
+                <span className="xv-code">{t.code}</span>
+              </div>
+              <div className="xv-cardTitle">{t.title}</div>
+              <div className="xv-cardDesc">دخول سريع إلى هذا الجذع</div>
+            </a>
+          ))}
+        </div>
+
+        <div className="xv-footer">
+          <button className="xv-btn">Browse Trunks</button>
+        </div>
       </section>
     </main>
   );
