@@ -1,35 +1,25 @@
+
 import { NextResponse } from "next/server"
-import prisma from "@/lib/prisma"
+import { prisma } from "@/lib/prisma"
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
-    const { searchParams } = new URL(req.url)
-    const code = searchParams.get("code")
+    const { trackingCode } = await req.json()
 
-    if (!code) {
-      return NextResponse.json(
-        { error: "Tracking code required" },
-        { status: 400 }
-      )
+    if (!trackingCode) {
+      return NextResponse.json({ error: "trackingCode is required" }, { status: 400 })
     }
 
     const order = await prisma.order.findFirst({
-      where: { trackingCode: code }
+      where: { trackingCode },
     })
 
     if (!order) {
-      return NextResponse.json(
-        { error: "Order not found" },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: "Order not found" }, { status: 404 })
     }
 
     return NextResponse.json(order)
-
   } catch (error) {
-    return NextResponse.json(
-      { error: "Server error" },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: "Tracking failed" }, { status: 500 })
   }
 }
