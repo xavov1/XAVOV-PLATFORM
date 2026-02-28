@@ -1,27 +1,24 @@
-"use client"
+'use client'
 
-import { useSearchParams, useRouter } from "next/navigation"
+import { Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 
-export default function SuccessPage() {
+function SuccessContent() {
   const searchParams = useSearchParams()
-  const router = useRouter()
-  const orderId = searchParams.get("id")
+  const orderId = searchParams.get('orderId')
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>تم الدفع بنجاح ✅</h1>
-
-      <p>رقم الطلب:</p>
-      <strong>{orderId}</strong>
-
-      <br /><br />
-
-      <button
-        onClick={() => router.push(`/track?id=${orderId}`)}
-        style={{ padding: "10px 20px" }}
-      >
-        تتبع الطلب
-      </button>
+    <div className="p-10 text-white">
+      <h1 className="text-2xl mb-4">Payment Successful</h1>
+      <p>Order ID: {orderId}</p>
     </div>
+  )
+}
+
+export default function SuccessPage() {
+  return (
+    <Suspense fallback={<div className="p-10 text-white">Loading...</div>}>
+      <SuccessContent />
+    </Suspense>
   )
 }
