@@ -1,80 +1,101 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 
 export default function CheckoutPage() {
   const router = useRouter()
-  const [value, setValue] = useState("")
-  const [loading, setLoading] = useState(false)
 
-  const handleVerify = async () => {
-    if (!value) return
+  const [form, setForm] = useState({
+    fullName: "",
+    phone: "",
+    address: "",
+    latitude: "",
+    longitude: "",
+  })
 
-    setLoading(true)
+  const total = 100
 
-    try {
-      // 1️⃣ إنشاء / جلب المستخدم
-      const userRes = await fetch("/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: value.includes("@") ? value : undefined,
-          phone: value.includes("@") ? undefined : value,
-        }),
-      })
+  const handleLocation = () => {
+    if (!navigator.geolocation) {
+      alert("المتصفح لا يدعم تحديد الموقع")
+      return
+    }
 
-      const user = await userRes.json()
-
-      if (!userRes.ok) {
-        alert("فشل إنشاء المستخدم")
-        setLoading(false)
-        return
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setForm({
+          ...form,
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString(),
+        })
+      },
+      () => {
+        alert("فشل في تحديد الموقع")
       }
+    )
+  }
 
-      // 2️⃣ إنشاء الطلب مربوط بالمستخدم
-      const orderRes = await fetch("/api/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: user.id,
-          total: 1900,
-          status: "pending",
-        }),
-      })
+  const handleSubmit = async (e: any) => {
+    e.preventDefault()
 
-      if (!orderRes.ok) {
-        alert("فشل إنشاء الطلب")
-        setLoading(false)
-        return
-      }
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...form,
+        items: [{ name: "Test Product", qty: 1 }],
+        total,
+      }),
+    })
 
-      router.push("/orders")
+    const data = await res.json()
 
-    } catch (err) {
-      alert("حدث خطأ")
-      setLoading(false)
+    if (data.id) {
+      router.push(`/payment?id=${data.id}`)
     }
   }
 
   return (
-    <div className="p-10">
-      <h2 className="text-xl mb-4">تسجيل لإتمام الطلب</h2>
+    <div style={{ padding: 40 }}>
+      <h1>إتمام الطلب</h1>
 
-      <input
-        className="border p-2 w-full"
-        placeholder="رقم الجوال أو الإيميل"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
+      <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
 
-      <button
-        onClick={handleVerify}
-        disabled={loading}
-        className="mt-4 bg-black text-white p-2 w-full"
-      >
-        {loading ? "جاري التنفيذ..." : "تحقق وأكمل"}
-      </button>
+        <input
+          placeholder="الاسم الكامل"
+          value={form.fullName}
+          onChange={(e) => setForm({ ...form, fullName: e.target.value })}
+        />
+
+        <input
+          placeholder="رقم الجوال"
+          value={form.phone}
+          onChange={(e) => setForm({ ...form, phone: e.target.value })}
+        />
+
+        <input
+          placeholder="العنوان"
+          value={form.address}
+          onChange={(e) => setForm({ ...form, address: e.target.value })}
+        />
+
+        <button type="button" onClick={handleLocation}>
+          📍 تحديد موقعي
+        </button>
+
+        {form.latitude && (
+          <div style={{ fontSize: 12 }}>
+            <p>Lat: {form.latitude}</p>
+            <p>Lng: {form.longitude}</p>
+          </div>
+        )}
+
+        <button type="submit">
+          تأكيد الطلب
+        </button>
+
+      </form>
     </div>
   )
 }

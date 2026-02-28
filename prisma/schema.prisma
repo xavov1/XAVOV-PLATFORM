@@ -3,28 +3,22 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String?  @unique
-  phone     String?  @unique
-  createdAt DateTime @default(now())
-}
-
 model Order {
-  id        String   @id @default(cuid())
-  total     Float
-  status    String
-  createdAt DateTime @default(now())
-}
+  id            String   @id @default(uuid())
+  fullName      String
+  phone         String
+  address       String
+  latitude      Float?
+  longitude     Float?
+  items         Json
+  total         Float
 
-model OTP {
-  id         String   @id @default(cuid())
-  identifier String
-  code       String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
+  paymentStatus String   @default("pending")
+  orderStatus   String   @default("pending")
+
+  createdAt     DateTime @default(now())
 }

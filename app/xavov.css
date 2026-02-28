@@ -1,0 +1,96 @@
+.xavov-container {
+  min-height: 100vh;
+  background: #000;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.xavov-bg-light {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  background: radial-gradient(circle, rgba(198,168,74,0.15), transparent 70%);
+  top: -200px;
+  left: -200px;
+  filter: blur(120px);
+}
+
+.xavov-hero {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: 100px;
+  position: relative;
+  z-index: 2;
+}
+
+.xavov-title {
+  font-size: 100px;
+  font-weight: 900;
+  letter-spacing: 8px;
+}
+
+.xavov-title span {
+  color: #c6a84a;
+}
+
+.xavov-line {
+  width: 200px;
+  height: 2px;
+  background: #c6a84a;
+  margin: 20px 0;
+}
+
+.xavov-sub {
+  font-size: 18px;
+  color: #aaa;
+  margin-bottom: 30px;
+}
+
+.xavov-btn {
+  width: 200px;
+  padding: 14px;
+  background: transparent;
+  border: 1px solid #c6a84a;
+  color: #c6a84a;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.xavov-btn:hover {
+  background: #c6a84a;
+  color: black;
+}
+
+.xavov-panels {
+  display: flex;
+  gap: 40px;
+  padding: 80px 100px;
+}
+
+.xavov-panel {
+  flex: 1;
+  background: #111;
+  padding: 60px;
+  border: 1px solid #222;
+  transition: 0.4s;
+}
+
+.xavov-panel:hover {
+  border-color: #c6a84a;
+  box-shadow: 0 0 30px rgba(198,168,74,0.3);
+}
+
+.xavov-panel h2 {
+  color: #c6a84a;
+  font-size: 28px;
+  letter-spacing: 4px;
+}
+
+.xavov-panel p {
+  margin-top: 20px;
+  color: #777;
+}npm run dev
