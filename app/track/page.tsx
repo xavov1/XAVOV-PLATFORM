@@ -1,12 +1,13 @@
-'use client'
-
 export const dynamic = 'force-dynamic'
 
-import { useSearchParams } from 'next/navigation'
+type Props = {
+  searchParams: {
+    orderId?: string
+  }
+}
 
-export default function TrackPage() {
-  const searchParams = useSearchParams()
-  const orderId = searchParams.get('orderId')
+export default function TrackPage({ searchParams }: Props) {
+  const orderId = searchParams.orderId
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black text-white">
