@@ -1,54 +1,27 @@
-"use client"
+'use client'
 
-import { useSearchParams } from "next/navigation"
-import { useEffect, useState } from "react"
+export const dynamic = 'force-dynamic'
+
+import { useSearchParams } from 'next/navigation'
 
 export default function TrackPage() {
   const searchParams = useSearchParams()
-  const orderId = searchParams.get("id")
-
-  const [order, setOrder] = useState<any>(null)
-
-  useEffect(() => {
-    if (!orderId) return
-
-    fetch(`/api/orders/${orderId}`)
-      .then(res => res.json())
-      .then(data => setOrder(data))
-  }, [orderId])
-
-  if (!order) {
-    return <div style={{ padding: 40 }}>جارٍ تحميل الطلب...</div>
-  }
+  const orderId = searchParams.get('orderId')
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1>تتبع الطلب</h1>
+    <div className="min-h-screen flex items-center justify-center bg-black text-white">
+      <div className="bg-zinc-900 p-8 rounded-xl shadow-lg w-full max-w-lg">
+        <h1 className="text-2xl font-bold mb-4">Track Your Order</h1>
 
-      <p><strong>رقم الطلب:</strong> {order.id}</p>
-      <p><strong>حالة الدفع:</strong> {order.paymentStatus}</p>
-      <p><strong>حالة الطلب:</strong> {order.orderStatus}</p>
-
-      <div style={{ marginTop: 30 }}>
-        <h3>مراحل الطلب:</h3>
-
-        <ul>
-          <li style={{ color: order.paymentStatus === "paid" ? "green" : "gray" }}>
-            ✔ تم الدفع
-          </li>
-
-          <li style={{ color: order.orderStatus === "processing" ? "green" : "gray" }}>
-            📦 قيد التجهيز
-          </li>
-
-          <li style={{ color: order.orderStatus === "shipped" ? "green" : "gray" }}>
-            🚚 تم الشحن
-          </li>
-
-          <li style={{ color: order.orderStatus === "delivered" ? "green" : "gray" }}>
-            📍 تم التسليم
-          </li>
-        </ul>
+        {orderId ? (
+          <p className="text-lg">
+            Tracking Order ID: <span className="text-green-400">{orderId}</span>
+          </p>
+        ) : (
+          <p className="text-red-400">
+            No Order ID provided.
+          </p>
+        )}
       </div>
     </div>
   )
