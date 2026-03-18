@@ -1,0 +1,62 @@
+/* ===== INPUTS (FIXED & PREMIUM) ===== */
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  direction: ltr;
+  margin-bottom: 20px;
+}
+
+.otp-input {
+  width: 58px;
+  height: 68px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  color: #F0EDE8;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  transition: all 0.25s ease;
+  caret-color: #D4A853;
+
+  /* 🔥 أهم تعديل */
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* لما تكتب */
+.otp-input.filled {
+  border-color: rgba(212,168,83,0.5);
+  color: #D4A853;
+  background: rgba(212,168,83,0.05);
+}
+
+/* فوكس */
+.otp-input:focus {
+  border-color: #D4A853;
+  background: rgba(212,168,83,0.08);
+
+  box-shadow:
+    0 0 0 3px rgba(212,168,83,0.15),
+    0 12px 30px rgba(212,168,83,0.15);
+
+  transform: translateY(-3px) scale(1.03);
+}
+
+/* خط تحت كل خانة (حركة فخمة) */
+.otp-input::after {
+  content: '';
+}
+
+/* Error */
+.otp-input.error {
+  border-color: rgba(192,57,43,0.7) !important;
+  background: rgba(192,57,43,0.06) !important;
+  color: #E57373 !important;
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.12);
+  animation: otpShake 0.4s ease;
+}

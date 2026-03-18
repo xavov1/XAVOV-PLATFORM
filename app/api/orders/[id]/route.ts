@@ -1,66 +1,84 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
 
-export async function GET(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+const prisma = new PrismaClient()
+
+function getOrderIdFromUrl(req: Request) {
+  const url = new URL(req.url)
+  const parts = url.pathname.split('/').filter(Boolean)
+  return parts[parts.length - 1]
+}
+
+// GET /api/orders/:id
+export async function GET(req: Request) {
   try {
-    const { id } = await context.params
+    const id = getOrderIdFromUrl(req)
 
     if (!id) {
-      return NextResponse.json({ error: "Missing id" }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Order id is missing' },
+        { status: 400 }
+      )
     }
 
-    const order = await prisma.order.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        total: true,
-        fullName: true,
-        phone: true,
-        address: true,
-        paymentStatus: true,
-        orderStatus: true,
-        createdAt: true,
-        latitude: true,
-        longitude: true,
-      },
+    const order = await prisma.order.findFirst({
+      where: { id }
     })
 
     if (!order) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 })
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      )
     }
 
     return NextResponse.json(order)
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    console.error('GET /api/orders/[id] error:', error)
+    return NextResponse.json(
+      { error: 'Server error' },
+      { status: 500 }
+    )
   }
 }
 
-export async function PATCH(
-  req: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+// POST /api/orders/:id
+export async function POST(req: Request) {
   try {
-    const { id } = await context.params
+    const id = getOrderIdFromUrl(req)
     const body = await req.json()
 
     if (!id) {
-      return NextResponse.json({ error: "Missing id" }, { status: 400 })
+      return NextResponse.json(
+        { error: 'Order id is missing' },
+        { status: 400 }
+      )
     }
 
-    const updated = await prisma.order.update({
-      where: { id },
-      data: {
-        orderStatus: body.status,
-      },
+    const existingOrder = await prisma.order.findFirst({
+      where: { id }
     })
 
-    return NextResponse.json(updated)
+    if (!existingOrder) {
+      return NextResponse.json(
+        { error: 'Order not found' },
+        { status: 404 }
+      )
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: existingOrder.id },
+      data: {
+        status: body.status ?? existingOrder.status
+      }
+    })
+
+    return NextResponse.json(updatedOrder)
   } catch (error) {
-    console.error(error)
-    return NextResponse.json({ error: "Server error" }, { status: 500 })
+    console.error('POST /api/orders/[id] error:', error)
+    return NextResponse.json(
+      { error: 'Server error' },
+      { status: 500 }
+    )
   }
 }

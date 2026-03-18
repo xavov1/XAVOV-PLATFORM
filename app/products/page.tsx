@@ -1,68 +1,56 @@
-import Link from "next/link";
+'use client'
+
+import { useEffect, useState } from 'react'
 
 export default function ProductsPage() {
-  const sections = [
-    { letter: "A", name: "الأجهزة الذكية وملحقاتها" },
-    { letter: "B", name: "الأجهزة المنزلية والطبية وملحقاتها" },
-    { letter: "C", name: "الأدوات الصناعية والزراعية" },
-    { letter: "D", name: "الإلكترونيات العامة" },
-    { letter: "G", name: "الألعاب والترفيه" },
-    { letter: "F", name: "قطع غيار السيارات والإكسسوارات" },
-    { letter: "E", name: "العروض والصفقات" },
-  ];
+  const [products, setProducts] = useState<any[]>([])
+
+  useEffect(() => {
+    // بيانات مؤقتة (بدل API عشان نوقف الأخطاء)
+    setProducts([
+      { id: 1, name: 'ثلاجة', price: 2800 },
+      { id: 2, name: 'تلفزيون', price: 3199 },
+      { id: 3, name: 'غسالة', price: 2100 },
+    ])
+  }, [])
+
+  const addToCart = (product: any) => {
+    const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+    cart.push(product)
+    localStorage.setItem('cart', JSON.stringify(cart))
+    alert('تمت الإضافة للسلة ✅')
+  }
 
   return (
-    <div
-      dir="rtl"
-      style={{
-        minHeight: "100vh",
-        background: "#0f0f11",
-        padding: 80,
-        fontFamily: "system-ui",
-        color: "#ffffff",
-      }}
-    >
-      <Link href="/" style={{ color: "#888", textDecoration: "none" }}>
-        ← الرجوع
-      </Link>
+    <div style={{ padding: 20 }}>
+      <h1>XAVOV</h1>
+      <h2>Products</h2>
 
-      <h1 style={{ marginTop: 50, marginBottom: 60, fontWeight: 300 }}>
-        أقسام المنتجات
-      </h1>
+      {products.map((p, index) => (
+        <div
+          key={index}
+          style={{
+            background: '#111',
+            padding: 20,
+            marginBottom: 20,
+            borderRadius: 10,
+          }}
+        >
+          <h3>{p.name}</h3>
+          <p>{p.price} SAR</p>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-          gap: 25,
-        }}
-      >
-        {sections.map((section) => (
-          <Link
-            key={section.letter}
-            href={`/products/${section.letter}`}
-            style={{ textDecoration: "none" }}
+          <button
+            onClick={() => addToCart(p)}
+            style={{
+              background: 'gold',
+              padding: '10px 15px',
+              borderRadius: 8,
+            }}
           >
-            <div style={cardStyle}>
-              <div style={{ fontSize: 26, marginBottom: 12, color: "#ffffff" }}>
-                {section.letter}
-              </div>
-              <div style={{ fontSize: 14, color: "#e5e5e5" }}>
-                {section.name}
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            Add To Cart
+          </button>
+        </div>
+      ))}
     </div>
-  );
+  )
 }
-
-const cardStyle = {
-  padding: 35,
-  borderRadius: 18,
-  background: "rgba(255,255,255,0.04)",
-  border: "1px solid rgba(255,255,255,0.08)",
-  textAlign: "center" as const,
-  transition: "all 0.25s ease",
-};

@@ -1,52 +1,51 @@
-import Link from "next/link";
+'use client'
+
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 
 export default function Header() {
+  const [count, setCount] = useState(0)
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]')
+      setCount(cart.length)
+    }
+
+    const handleScroll = () => setScrolled(window.scrollY > 20)
+
+    updateCart()
+    window.addEventListener('storage', updateCart)
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('storage', updateCart)
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
-    <header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "16px 24px",
-        borderBottom: "1px solid #222",
-        backgroundColor: "#0b0b0b",
-      }}
-    >
-      {/* LOGO */}
-      <div
-        style={{
-          fontSize: "20px",
-          fontWeight: "bold",
-          color: "#d4af37",
-        }}
-      >
-        XAVOV
+    <header className={`xav-header${scrolled ? ' scrolled' : ''}`}>
+      <div className="xav-logo-wrap">
+        <Link href="/" className="xav-logo">XAVOV</Link>
       </div>
 
-      {/* NAV */}
-      <nav style={{ display: "flex", gap: "16px" }}>
-        <Link href="/" style={{ color: "#fff", textDecoration: "none" }}>
-          Home
+      <div className="xav-actions">
+        <Link href="/cart" className="xav-cart">
+          <div className="xav-cart-inner">
+            <div className="xav-cart-icon">🛒</div>
+            <div>
+              <span className="xav-cart-label">CART</span>
+              <span className="xav-cart-name">السلة</span>
+            </div>
+          </div>
+
+          {count > 0 && (
+            <div className="xav-badge">{count}</div>
+          )}
         </Link>
-        <Link
-          href="/marketplace"
-          style={{ color: "#fff", textDecoration: "none" }}
-        >
-          Marketplace
-        </Link>
-        <Link
-          href="/products"
-          style={{ color: "#fff", textDecoration: "none" }}
-        >
-          Products
-        </Link>
-        <Link
-          href="/auctions"
-          style={{ color: "#fff", textDecoration: "none" }}
-        >
-          Auctions
-        </Link>
-      </nav>
+      </div>
     </header>
-  );
+  )
 }

@@ -1,21 +1,29 @@
-import { NextResponse } from "next/server"
-import { prisma } from "@/lib/prisma"
+import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export async function POST(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  try {
-    await prisma.order.update({
-      where: { id: params.id },
-      data: {
-        paymentStatus: "paid",
-        orderStatus: "processing",
-      },
-    })
+  const order = await prisma.order.findFirst({
+    where: { id: params.id }
+  })
 
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: "Error" }, { status: 500 })
+  if (!order) {
+    return NextResponse.json({ error: 'Order not found' })
   }
+
+  const updated = await prisma.order.update({
+    where: { id: order.id },
+    data: {
+      status: 'paid'
+    }
+  })
+
+  return NextResponse.json({
+    message: 'تم الدفع بنجاح',
+    order: updated
+  })
 }

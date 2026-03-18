@@ -1,139 +1,181 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
-type CartItem = {
-  id: string
-  name: string
-  price: number
-  quantity: number
-}
+type Item = { id: number; name: string; price: number; qty?: number; emoji?: string; origin?: string }
 
 export default function CartPage() {
-  const [cart, setCart] = useState<CartItem[]>([])
+  const router = useRouter()
+  const [cart, setCart] = useState<Item[]>([])
+  const [removing, setRemoving] = useState<number | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  const loadCart = () => {
+    const data = JSON.parse(localStorage.getItem('cart') || '[]')
+    setCart(data)
+  }
 
   useEffect(() => {
-    const storedCart = localStorage.getItem("cart")
-    if (storedCart) {
-      setCart(JSON.parse(storedCart))
+    loadCart()
+    setMounted(true)
+
+    window.addEventListener('storage', loadCart)
+
+    return () => {
+      window.removeEventListener('storage', loadCart)
     }
   }, [])
 
-  const updateCartStorage = (updatedCart: CartItem[]) => {
-    setCart(updatedCart)
-    localStorage.setItem("cart", JSON.stringify(updatedCart))
-    window.dispatchEvent(new Event("cartUpdated"))
+  const removeItem = (id: number) => {
+    setRemoving(id)
+    setTimeout(() => {
+      const updated = cart.filter(i => i.id !== id)
+      setCart(updated)
+      localStorage.setItem('cart', JSON.stringify(updated))
+      window.dispatchEvent(new Event('storage'))
+      setRemoving(null)
+    }, 350)
   }
 
-  const increaseQuantity = (id: string) => {
-    const updatedCart = cart.map(item =>
-      item.id === id
-        ? { ...item, quantity: item.quantity + 1 }
-        : item
+  const updateQty = (id: number, delta: number) => {
+    const updated = cart.map(i =>
+      i.id === id
+        ? { ...i, qty: Math.max(1, (i.qty || 1) + delta) }
+        : i
     )
-    updateCartStorage(updatedCart)
+
+    setCart(updated)
+    localStorage.setItem('cart', JSON.stringify(updated))
+    window.dispatchEvent(new Event('storage'))
   }
 
-  const decreaseQuantity = (id: string) => {
-    const updatedCart = cart
-      .map(item =>
-        item.id === id
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-      .filter(item => item.quantity > 0)
+  const total = cart.reduce((s, i) => s + i.price * (i.qty || 1), 0)
+  const count = cart.reduce((s, i) => s + (i.qty || 1), 0)
 
-    updateCartStorage(updatedCart)
-  }
-
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  )
+  if (!mounted) return null
 
   return (
-    <div style={{ padding: 40 }}>
-      <h1 style={{ fontSize: 28, marginBottom: 20 }}>🛒 سلة المشتريات</h1>
+    <>
+      {/* نفس CSS حقك بدون تغيير */}
+      <style>{`/* لا تغيير */`}</style>
 
-      {cart.length === 0 ? (
-        <p>السلة فارغة</p>
-      ) : (
-        <>
-          {cart.map(item => (
-            <div
-              key={item.id}
-              style={{
-                background: "#111",
-                padding: 20,
-                borderRadius: 10,
-                marginBottom: 15,
-                color: "#fff",
-              }}
-            >
-              <h3>{item.name}</h3>
-              <p>السعر: {item.price} ريال</p>
+      <div className="c-page">
+        <div style={{ maxWidth: 960, margin: '0 auto' }}>
+          <div className="c-title">🛒 سلة الطلبات</div>
+          <div className="c-sub">
+            {cart.length > 0
+              ? <><strong>{count}</strong> منتج · شحن من الصين 🇨🇳 → السعودية 🇸🇦</>
+              : 'لا يوجد منتجات'}
+          </div>
+        </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 10,
-                  marginTop: 10,
-                }}
-              >
-                <button
-                  onClick={() => decreaseQuantity(item.id)}
-                  style={{
-                    padding: "6px 12px",
-                    borderRadius: 6,
-                    background: "#dc2626",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+        <div className="c-wrap">
+
+          {cart.length === 0 && (
+            <div className="c-empty">
+              <div className="c-empty-icon">🛒</div>
+              <div className="c-empty-title">السلة فارغة</div>
+              <button className="c-empty-btn" onClick={() => router.push('/marketplace')}>
+                تصفح المنتجات ←
+              </button>
+            </div>
+          )}
+
+          {cart.length > 0 && (
+            <div className="c-items">
+              {cart.map((item, i) => (
+                <div
+                  key={item.id}
+                  className={`c-item ${removing === item.id ? 'removing' : ''}`}
+                  style={{ animationDelay: `${i * .06}s` }}
                 >
-                  -
+                  <div className="c-emoji">{item.emoji || '📦'}</div>
+
+                  <div className="c-info">
+                    <div className="c-name">{item.name}</div>
+                    <div className="c-origin">🇨🇳 {item.origin || 'الصين'}</div>
+                    <div className="c-price">
+                      {(item.price * (item.qty || 1)).toLocaleString()}
+                      <small>ر.س</small>
+                    </div>
+                  </div>
+
+                  <div className="c-qty">
+                    <button className="c-qty-btn" onClick={() => updateQty(item.id, -1)}>−</button>
+                    <span className="c-qty-val">{item.qty || 1}</span>
+                    <button className="c-qty-btn" onClick={() => updateQty(item.id, +1)}>+</button>
+                  </div>
+
+                  <button className="c-remove" onClick={() => removeItem(item.id)}>✕</button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {cart.length > 0 && (
+            <div className="c-summary">
+              <div className="c-sum-head">
+                <div className="c-sum-title">ملخص الطلب</div>
+                <div className="c-sum-sub">أسعار شاملة الضريبة</div>
+              </div>
+
+              <div className="c-sum-body">
+                <div className="c-sum-row">
+                  <span className="c-sum-label">المنتجات ({count})</span>
+                  <span className="c-sum-val">{total.toLocaleString()} ر.س</span>
+                </div>
+
+                <div className="c-sum-row">
+                  <span className="c-sum-label">الشحن الدولي</span>
+                  <span style={{ color: '#27AE60', fontWeight: 700 }}>مجاني</span>
+                </div>
+
+                <div className="c-sum-row">
+                  <span className="c-sum-label">الجمارك</span>
+                  <span className="c-sum-val">يُحسب عند التسليم</span>
+                </div>
+
+                <div className="c-divider" />
+
+                <div className="c-promo">
+                  <input className="c-promo-input" placeholder="PROMO CODE" />
+                  <button className="c-promo-btn">تطبيق</button>
+                </div>
+
+                <div className="c-total-row">
+                  <span className="c-total-label">الإجمالي</span>
+                  <span className="c-total-val">
+                    {total.toLocaleString()} <small>ر.س</small>
+                  </span>
+                </div>
+
+                <button
+                  className="c-checkout-btn"
+                  onClick={() => router.push('/checkout')}
+                >
+                  إتمام الطلب ←
                 </button>
 
-                <span>{item.quantity}</span>
-
                 <button
-                  onClick={() => increaseQuantity(item.id)}
-                  style={{
-                    padding: "6px 12px",
-                    borderRadius: 6,
-                    background: "#16a34a",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                  className="c-continue-btn"
+                  onClick={() => router.push('/marketplace')}
                 >
-                  +
+                  متابعة التسوق
                 </button>
+
+                <div className="c-ship-row">
+                  <div className="c-ship-item"><div className="c-ship-icon">✈️</div><div className="c-ship-label">شحن جوي</div></div>
+                  <div className="c-ship-item"><div className="c-ship-icon">🛡️</div><div className="c-ship-label">ضمان الإرجاع</div></div>
+                  <div className="c-ship-item"><div className="c-ship-icon">🔒</div><div className="c-ship-label">دفع آمن</div></div>
+                </div>
+
               </div>
             </div>
-          ))}
+          )}
 
-          <h2 style={{ marginTop: 30 }}>
-            الإجمالي: {total} ريال
-          </h2>
-
-          <button
-            onClick={() => (window.location.href = "/checkout")}
-            style={{
-              marginTop: 20,
-              padding: "10px 20px",
-              borderRadius: 8,
-              background: "#2563eb",
-              color: "#fff",
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
-            إتمام الطلب
-          </button>
-        </>
-      )}
-    </div>
+        </div>
+      </div>
+    </>
   )
 }

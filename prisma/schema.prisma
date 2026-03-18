@@ -1,24 +1,13 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 model Order {
-  id            String   @id @default(uuid())
-  fullName      String
-  phone         String
-  address       String
-  latitude      Float?
-  longitude     Float?
-  items         Json
-  total         Float
-
-  paymentStatus String   @default("pending")
-  orderStatus   String   @default("pending")
-
+  id            String   @id @default(cuid())
+  email         String?
+  phone         String?
+  name          String?
+  address       String?
+  paymentMethod String?  @default("card")
+  totalAmount   Float
+  status        String   @default("processing")
+  items         Json?
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
