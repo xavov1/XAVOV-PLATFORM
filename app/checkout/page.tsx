@@ -1,87 +1,77 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import './checkout.css'
 
 type Payment = 'card' | 'applepay' | 'stc' | 'tamara'
-type Step = 'personal' | 'address' | 'payment'
 
 const payMethods = [
-  { id: 'card',     icon: '💳', label: 'بطاقة بنكية',  sub: 'مدى · فيزا · ماستركارد' },
-  { id: 'applepay', icon: '🍎', label: 'Apple Pay',    sub: 'ادفع بلمسة واحدة' },
-  { id: 'stc',      icon: '📱', label: 'STC Pay',      sub: 'محفظة STC الرقمية' },
-  { id: 'tamara',   icon: '🟢', label: 'تمارا',        sub: 'اشتر الآن وادفع بعد 30 يوم' },
-]
-
-const steps = [
-  { key: 'personal', label: 'البيانات' },
-  { key: 'address',  label: 'العنوان' },
-  { key: 'payment',  label: 'الدفع' },
+  { id: 'card',     label: 'مدى / Visa',  sub: 'بطاقة ائتمانية أو مدى' },
+  { id: 'applepay', label: 'Apple Pay',   sub: 'ادفع بلمسة واحدة' },
+  { id: 'stc',      label: 'STC Pay',     sub: 'محفظة STC الرقمية' },
+  { id: 'tamara',   label: 'تمارا',       sub: 'اشتري الآن وادفع لاحقاً' },
 ]
 
 export default function CheckoutPage() {
   const router = useRouter()
 
-  const [step, setStep] = useState<Step>('personal')
-  const [loading, setLoading] = useState(false)
   const [payment, setPayment] = useState<Payment>('card')
+  const [cart,    setCart]    = useState<any[]>([])
+  const [loading, setLoading] = useState(false)
 
-  const [form, setForm] = useState({
-    name: '', phone: '', email: '',
-    country: 'المملكة العربية السعودية',
-    city: '', district: '', street: '', building: '',
-  })
+  useEffect(() => {
+    if (!localStorage.getItem('userPhone')) {
+      router.replace('/register')
+      return
+    }
+    setCart(JSON.parse(localStorage.getItem('cart') || '[]'))
+  }, [])
 
-  const handleChange = (e: any) =>
-    setForm({ ...form, [e.target.name]: e.target.value })
+  const total = cart.reduce((s: number, i: any) => s + i.price * (i.quantity || 1), 0)
 
-  // ===== 🧠 TOTAL FROM CART =====
-  const cart = JSON.parse(typeof window !== 'undefined' ? localStorage.getItem('cart') || '[]' : '[]')
-  const total = cart.reduce((s: number, i: any) => s + i.price * (i.qty || 1), 0)
-
-  // ===== 🎁 POINTS SYSTEM =====
-  const savedPoints = Number(typeof window !== 'undefined' ? localStorage.getItem('points') || 0 : 0)
-
-  const usablePoints = Math.floor(savedPoints / 5) * 5
-  const discount = (usablePoints / 5) * 1.5
-  const maxDiscount = total * 0.2
-  const finalDiscount = Math.min(discount, maxDiscount)
-  const finalTotal = total - finalDiscount
-
-  // ===== 🚀 SUBMIT =====
-  const handleSubmit = async () => {
+  const confirmPayment = async () => {
+    if (loading) return
     setLoading(true)
-
     try {
-      const contact = form.phone || form.email
-      const method  = form.phone ? 'phone' : 'email'
-
-      const res = await fetch('/api/otp/send', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ method, contact }),
-      })
-
-      if (!res.ok) {
-        alert('فشل إرسال رمز التحقق')
-        return
+      const order = {
+        id:        `XA-${Date.now()}`,
+        items:     cart,
+        total,
+        payment,
+        name:      localStorage.getItem('userName')     || '',
+        phone:     localStorage.getItem('userPhone')    || '',
+        email:     localStorage.getItem('userEmail')    || '',
+        city:      localStorage.getItem('userCity')     || '',
+        country:   localStorage.getItem('userCountry')  || '',
+        district:  localStorage.getItem('userDistrict') || '',
+        status:    'processing',
+        createdAt: new Date().toISOString(),
+        points:    0,
       }
 
-      localStorage.setItem('checkout', JSON.stringify({
-        form,
-        payment,
-        total: finalTotal,
-      }))
+      localStorage.setItem('currentOrder', JSON.stringify(order))
 
-      localStorage.setItem('contact', contact)
-      localStorage.setItem('method', method)
+      const history = JSON.parse(localStorage.getItem('orderHistory') || '[]')
+      history.unshift(order)
+      localStorage.setItem('orderHistory', JSON.stringify(history))
 
-      // 🧨 خصم النقاط
-      localStorage.setItem('points', String(savedPoints - usablePoints))
+      // Persist to DB (best effort)
+      fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email:       order.email,
+          phone:       order.phone,
+          totalAmount: order.total,
+          items:       order.items,
+        }),
+      }).catch(() => {})
 
-      router.push('/otp')
+      localStorage.removeItem('cart')
+      window.dispatchEvent(new Event('storage'))
 
+      router.push('/track')
     } catch {
       alert('خطأ، حاول مجدداً')
     } finally {
@@ -94,90 +84,39 @@ export default function CheckoutPage() {
       <div className="co-wrap">
 
         <div className="co-logo">XAVOV</div>
-        <div className="co-title">إتمام الطلب</div>
+        <div className="co-title">طريقة الدفع</div>
 
-        {/* السعر */}
-        <div style={{
-          background: '#0c1020',
-          padding: 16,
-          borderRadius: 16,
-          border: '1px solid rgba(255,255,255,0.06)'
-        }}>
-          <div style={{fontSize:12,color:'#4A5568'}}>الإجمالي</div>
-          <div style={{fontSize:22,fontWeight:900,color:'#D4A853'}}>
-            {finalTotal.toFixed(2)} ر.س
+        <div style={{ background: '#0c1020', padding: 16, borderRadius: 16, border: '1px solid rgba(255,255,255,0.06)' }}>
+          <div style={{ fontSize: 12, color: '#4A5568' }}>إجمالي الطلب</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: '#D4A853' }}>
+            {total.toFixed(2)} ر.س
           </div>
-
-          {finalDiscount > 0 && (
-            <div style={{fontSize:11,color:'#27AE60'}}>
-              تم خصم {finalDiscount.toFixed(2)} ر.س من النقاط
-            </div>
-          )}
+          <div style={{ fontSize: 11, color: '#4A5568', marginTop: 4 }}>شامل الشحن المجاني</div>
         </div>
 
-        {/* PERSONAL */}
-        {step === 'personal' && (
-          <div className="co-card">
-            <div className="co-card-body">
+        <div className="co-card">
+          <div className="co-card-body">
 
-              <input className="co-input" name="name" placeholder="الاسم"
-                value={form.name} onChange={handleChange} />
-
-              <input className="co-input" name="phone" placeholder="الجوال"
-                value={form.phone} onChange={handleChange} />
-
-              <input className="co-input" name="email" placeholder="الإيميل"
-                value={form.email} onChange={handleChange} />
-
-              <button className="co-btn" onClick={() => setStep('address')}>
-                التالي
-              </button>
-
-            </div>
-          </div>
-        )}
-
-        {/* ADDRESS */}
-        {step === 'address' && (
-          <div className="co-card">
-            <div className="co-card-body">
-
-              <input className="co-input" name="city" placeholder="المدينة"
-                value={form.city} onChange={handleChange} />
-
-              <input className="co-input" name="district" placeholder="الحي"
-                value={form.district} onChange={handleChange} />
-
-              <button className="co-btn" onClick={() => setStep('payment')}>
-                التالي
-              </button>
-
-            </div>
-          </div>
-        )}
-
-        {/* PAYMENT */}
-        {step === 'payment' && (
-          <div className="co-card">
-            <div className="co-card-body">
-
+            <div className="co-pay-grid">
               {payMethods.map(m => (
                 <button
                   key={m.id}
                   className={`co-pay-btn ${payment === m.id ? 'selected' : ''}`}
                   onClick={() => setPayment(m.id as Payment)}
                 >
-                  {m.label}
+                  <div className="co-pay-check" />
+                  <div style={{ fontSize: 13, fontWeight: 700, color: '#F0EDE8', marginBottom: 3 }}>{m.label}</div>
+                  <div style={{ fontSize: 10, color: '#6B7280' }}>{m.sub}</div>
                 </button>
               ))}
-
-              <button className="co-btn" onClick={handleSubmit} disabled={loading}>
-                {loading ? 'جارٍ...' : 'تأكيد الطلب'}
-              </button>
-
             </div>
+
+            <button className="co-btn" onClick={confirmPayment} disabled={loading}>
+              {loading ? 'جارٍ...' : 'تأكيد الدفع ←'}
+            </button>
+
           </div>
-        )}
+        </div>
 
       </div>
     </div>

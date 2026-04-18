@@ -4,45 +4,31 @@ export async function POST(req: Request) {
   try {
     const { method, contact } = await req.json()
 
-    // ✅ تحقق من البيانات
-    if (!method || !contact) {
+    if (method !== 'phone') {
       return NextResponse.json(
-        { success: false, error: 'البيانات ناقصة' },
+        { success: false, error: 'method must be "phone"' },
         { status: 400 }
       )
     }
 
-    if (method !== 'phone' && method !== 'email') {
+    if (!contact || contact.trim() === '') {
       return NextResponse.json(
-        { success: false, error: 'طريقة الإرسال غير صحيحة' },
+        { success: false, error: 'contact is required and must be non-empty' },
         { status: 400 }
       )
     }
 
-    // 🔥 توليد كود OTP
-    const code = Math.floor(100000 + Math.random() * 900000).toString()
+    const code = Math.floor(1000 + Math.random() * 9000).toString()
 
-    // ⏳ مدة الصلاحية (5 دقائق)
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000)
+    globalThis.otpStore = globalThis.otpStore || {}
+    globalThis.otpStore[contact] = code
 
-    // 🧠 تخزين مؤقت (للتجربة فقط)
-    if (!globalThis.otpStore) {
-      globalThis.otpStore = new Map()
-    }
+    console.log("========== OTP ==========")
+    console.log("PHONE:", contact)
+    console.log("CODE:", code)
+    console.log("=========================")
 
-    globalThis.otpStore.set(contact, {
-      code,
-      method,
-      expiresAt
-    })
-
-    // 👇 يطلع في التيرمنال
-    console.log('OTP:', code)
-
-    return NextResponse.json({
-      success: true,
-      message: 'تم إرسال الرمز'
-    })
+    return NextResponse.json({ success: true, code })
 
   } catch (error) {
     console.error('[OTP SEND ERROR]', error)

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAVOV — نوافذ جناح A</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-b:rgba(201,168,76,0.16);--gold-b2:rgba(201,168,76,0.38);
+  --gold-glow:rgba(201,168,76,0.07);
+  --bg:#02040A;--bg2:#04060D;
+  --surface:#080D18;--surface2:#0B1020;--surface3:#0E1428;
+  --text:#EDE5D5;--text2:#B5AC9C;--muted:#524C44;
+  --green:#2ECC71;--red:#C0392B;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.022;mix-blend-mode:overlay;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;height:64px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 52px;
+  background:rgba(2,4,10,0.96);border-bottom:1px solid var(--gold-b);backdrop-filter:blur(24px);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);letter-spacing:5px;font-weight:600;}
+.nav-path{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);letter-spacing:0.5px;}
+.nav-path-sep{color:var(--gold-b2);}
+.nav-path-cur{color:var(--text2);}
+.nav-cart-btn{display:flex;align-items:center;gap:8px;padding:8px 18px;
+  border:1px solid var(--gold-b);cursor:pointer;transition:border-color 0.2s;position:relative;}
+.nav-cart-btn:hover{border-color:var(--gold-b2);}
+.nav-cart-lbl{font-size:11px;color:var(--muted);letter-spacing:1px;}
+.nav-cart-ico{font-size:14px;color:var(--gold);}
+.cart-count{position:absolute;top:-6px;left:-6px;width:18px;height:18px;
+  background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#fff;font-weight:700;
+  transform:scale(0);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);}
+.cart-count.show{transform:scale(1);}
+
+/* BACK + HEADER */
+.page-header{padding:36px 52px 0;position:relative;z-index:1;}
+.back-btn{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);
+  letter-spacing:1px;cursor:pointer;transition:color 0.2s;margin-bottom:28px;}
+.back-btn:hover{color:var(--gold);}
+.back-arr{font-size:14px;transition:transform 0.2s;}
+.back-btn:hover .back-arr{transform:translateX(3px);}
+.wing-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:0;}
+.wing-title-block{}
+.wing-eyebrow{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:6px;
+  color:rgba(201,168,76,0.45);margin-bottom:8px;}
+.wing-title{font-size:clamp(28px,4vw,44px);font-weight:700;letter-spacing:0.3px;margin-bottom:4px;}
+.wing-title span{font-family:'Cormorant Garamond',serif;color:var(--gold);font-weight:300;}
+.wing-sub{font-size:13px;color:var(--muted);letter-spacing:0.5px;}
+.wing-count{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--muted);
+  letter-spacing:3px;padding:6px 16px;border:1px solid var(--gold-b);}
+
+/* WINDOW SWITCHER */
+.window-switcher{padding:28px 52px 0;position:relative;z-index:1;}
+.switcher-label{font-size:9px;letter-spacing:4px;color:var(--muted);
+  font-family:'Cormorant Garamond',serif;margin-bottom:12px;}
+.switcher-tabs{display:flex;gap:0;border:1px solid var(--gold-b);background:var(--surface);width:fit-content;}
+.win-tab{padding:10px 22px;font-size:12px;font-weight:600;color:var(--muted);
+  cursor:pointer;transition:all 0.25s;border-left:1px solid var(--gold-b);
+  display:flex;flex-direction:column;align-items:center;gap:3px;min-width:80px;}
+.win-tab:last-child{border-left:none;}
+.win-tab:hover{color:var(--text2);background:var(--surface2);}
+.win-tab.active{color:var(--gold);background:var(--gold-glow);position:relative;}
+.win-tab.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:var(--gold);}
+.win-tab-code{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;line-height:1;}
+.win-tab-name{font-size:9px;letter-spacing:1px;white-space:nowrap;}
+
+/* FILTER BAR */
+.filter-bar{padding:20px 52px 0;display:flex;align-items:center;gap:10px;position:relative;z-index:1;}
+.filter-btn{padding:7px 18px;border:1px solid var(--gold-b);background:transparent;
+  color:var(--muted);font-size:11px;font-family:'Cairo',sans-serif;letter-spacing:0.5px;
+  cursor:pointer;transition:all 0.25s;}
+.filter-btn:hover{border-color:var(--gold-b2);color:var(--text2);}
+.filter-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+.filter-sep{width:1px;height:20px;background:var(--gold-b);margin:0 4px;}
+.sort-select{padding:7px 16px;border:1px solid var(--gold-b);background:var(--surface2);
+  color:var(--muted);font-size:11px;font-family:'Cairo',sans-serif;outline:none;cursor:pointer;}
+.filter-count{margin-right:auto;font-size:11px;color:var(--muted);letter-spacing:1px;
+  font-family:'Cormorant Garamond',serif;}
+
+/* PRODUCTS GRID */
+.products-section{padding:28px 52px 80px;position:relative;z-index:1;}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;
+  background:var(--gold-b);border:1px solid var(--gold-b);}
+
+/* PRODUCT CARD */
+.product-card{background:var(--surface);position:relative;overflow:hidden;
+  cursor:pointer;transition:background 0.3s;display:flex;flex-direction:column;}
+.product-card:hover{background:var(--surface2);}
+.product-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  opacity:0;transition:opacity 0.3s;}
+.product-card:hover::before{opacity:0.5;}
+
+/* Card image */
+.card-img{height:200px;background:var(--surface2);display:flex;align-items:center;
+  justify-content:center;position:relative;overflow:hidden;border-bottom:1px solid var(--gold-b);}
+.card-img-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 50%,rgba(201,168,76,0.04) 0%,transparent 70%);}
+.card-img-ico{font-family:'Cormorant Garamond',serif;font-size:64px;color:var(--gold);opacity:0.12;line-height:1;position:relative;z-index:1;}
+.card-img-corner{position:absolute;width:14px;height:14px;border-color:var(--gold);border-style:solid;opacity:0.25;}
+.card-img-corner.tl{top:10px;right:10px;border-width:1px 1px 0 0;}
+.card-img-corner.bl{bottom:10px;right:10px;border-width:0 1px 1px 0;}
+
+/* Card badges */
+.card-badges{position:absolute;top:10px;left:10px;display:flex;flex-direction:column;gap:4px;}
+.badge-type{font-size:8px;letter-spacing:2px;padding:3px 8px;font-family:'Cormorant Garamond',serif;}
+.badge-original{background:rgba(46,204,113,0.12);color:var(--green);border:1px solid rgba(46,204,113,0.25);}
+.badge-alt{background:rgba(201,168,76,0.1);color:var(--gold);border:1px solid var(--gold-b);}
+.badge-refurb{background:rgba(93,173,226,0.1);color:#5DADE2;border:1px solid rgba(93,173,226,0.25);}
+.badge-new{background:rgba(192,57,43,0.1);color:#E74C3C;border:1px solid rgba(192,57,43,0.25);}
+
+/* Card body */
+.card-body{padding:20px 20px 16px;flex:1;display:flex;flex-direction:column;}
+.card-code{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;}
+.card-name{font-size:15px;font-weight:700;margin-bottom:3px;line-height:1.3;}
+.card-name-en{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--muted);font-style:italic;letter-spacing:1px;margin-bottom:12px;}
+.card-specs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.card-spec{font-size:10px;color:var(--muted);padding:3px 8px;border:1px solid rgba(201,168,76,0.08);
+  background:var(--surface3);letter-spacing:0.5px;}
+.card-condition{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+.cond-bar{flex:1;height:2px;background:var(--surface3);overflow:hidden;}
+.cond-fill{height:100%;background:linear-gradient(90deg,var(--gold),#E8C97A);transition:width 0.5s;}
+.cond-val{font-size:10px;color:var(--gold);letter-spacing:1px;white-space:nowrap;font-family:'Cormorant Garamond',serif;}
+
+/* Card footer */
+.card-footer{border-top:1px solid var(--gold-b);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.card-price-block{}
+.card-price{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);font-weight:300;line-height:1;}
+.card-price-cur{font-size:9px;color:var(--muted);letter-spacing:1px;}
+.card-price-old{font-size:11px;color:var(--muted);text-decoration:line-through;opacity:0.5;}
+.card-add-btn{display:flex;align-items:center;gap:6px;padding:9px 18px;
+  border:1px solid var(--gold);color:var(--gold);background:transparent;
+  font-size:11.5px;font-family:'Cairo',sans-serif;letter-spacing:0.3px;
+  cursor:pointer;transition:all 0.25s;white-space:nowrap;flex-shrink:0;}
+.card-add-btn:hover{background:var(--gold);color:var(--bg);}
+.card-add-btn.added{border-color:var(--green);color:var(--green);background:rgba(46,204,113,0.05);}
+
+/* LOADING STATE */
+.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1px;
+  background:var(--gold-b);border:1px solid var(--gold-b);}
+.skeleton-card{background:var(--surface);padding:0;overflow:hidden;}
+.skeleton-img{height:200px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;}
+.skeleton-body{padding:20px;}
+.skeleton-line{height:10px;background:linear-gradient(90deg,var(--surface) 25%,var(--surface2) 50%,var(--surface) 75%);
+  background-size:200% 100%;animation:shimmer 1.5s infinite;margin-bottom:10px;border-radius:0;}
+.skeleton-line.short{width:60%;}
+.skeleton-line.shorter{width:40%;}
+@keyframes shimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+
+/* EMPTY STATE */
+.empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:100px 48px;text-align:center;}
+.empty-state.show{display:flex;}
+.empty-ico{font-family:'Cormorant Garamond',serif;font-size:64px;color:var(--gold);opacity:0.15;margin-bottom:24px;line-height:1;}
+.empty-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text2);}
+.empty-sub{font-size:13px;color:var(--muted);letter-spacing:0.5px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--surface);border:1px solid var(--gold-b2);padding:12px 28px;
+  font-size:12px;color:var(--text);letter-spacing:0.5px;backdrop-filter:blur(16px);
+  z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  display:flex;align-items:center;gap:10px;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast-dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
+
+/* DIVIDER */
+.section-div{height:1px;background:linear-gradient(90deg,transparent,var(--gold-b),transparent);margin:0 52px;}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><div class="toast-dot"></div><span id="toast-msg"></span></div>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">XAVOV</span>
+  <div class="nav-path">
+    <span>المتجر</span>
+    <span class="nav-path-sep">·</span>
+    <span>جناح A</span>
+    <span class="nav-path-sep">·</span>
+    <span class="nav-path-cur" id="current-window-path">الجوالات</span>
+  </div>
+  <div class="nav-cart-btn" id="nav-cart">
+    <span class="nav-cart-ico">⊹</span>
+    <span class="nav-cart-lbl">السلة</span>
+    <div class="cart-count" id="cart-count">0</div>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="back-btn" onclick="goBack()">
+    <span class="back-arr">→</span>
+    <span>العودة للنوافذ</span>
+  </div>
+  <div class="wing-header">
+    <div class="wing-title-block">
+      <div class="wing-eyebrow">WING A · 1500 · الأجهزة الذكية</div>
+      <h1 class="wing-title"><span id="win-code-title">A1</span> &nbsp;<span style="color:var(--text);font-family:'Cairo',sans-serif;font-size:clamp(22px,3vw,36px);font-weight:700;" id="win-name-title">الجوالات</span></h1>
+      <p class="wing-sub" id="win-sub-title">Smartphones & Mobile Devices</p>
+    </div>
+    <div class="wing-count" id="win-count">6 منتجات</div>
+  </div>
+</div>
+
+<!-- WINDOW SWITCHER -->
+<div class="window-switcher">
+  <div class="switcher-label">اختر النافذة · SELECT WINDOW</div>
+  <div class="switcher-tabs" id="switcher-tabs">
+    <div class="win-tab active" onclick="switchWindow('A1','الجوالات','Smartphones',this)">
+      <div class="win-tab-code">A1</div>
+      <div class="win-tab-name">الجوالات</div>
+    </div>
+    <div class="win-tab" onclick="switchWindow('A2','اللابتوبات','Laptops',this)">
+      <div class="win-tab-code">A2</div>
+      <div class="win-tab-name">اللابتوبات</div>
+    </div>
+    <div class="win-tab" onclick="switchWindow('A3','قطع الكمبيوتر','PC Parts',this)">
+      <div class="win-tab-code">A3</div>
+      <div class="win-tab-name">قطع الكمبيوتر</div>
+    </div>
+    <div class="win-tab" onclick="switchWindow('A4','الطابعات','Printers',this)">
+      <div class="win-tab-code">A4</div>
+      <div class="win-tab-name">الطابعات</div>
+    </div>
+    <div class="win-tab" onclick="switchWindow('A5','الشاشات','Monitors',this)">
+      <div class="win-tab-code">A5</div>
+      <div class="win-tab-name">الشاشات</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterProducts('all',this)">الكل</button>
+  <button class="filter-btn" onclick="filterProducts('original',this)">أصلي</button>
+  <button class="filter-btn" onclick="filterProducts('alternative',this)">بديل</button>
+  <button class="filter-btn" onclick="filterProducts('refurbished',this)">مجدد</button>
+  <div class="filter-sep"></div>
+  <select class="sort-select" onchange="sortProducts(this.value)">
+    <option value="default">الترتيب الافتراضي</option>
+    <option value="price-asc">السعر: من الأقل</option>
+    <option value="price-desc">السعر: من الأعلى</option>
+    <option value="condition">الحالة: الأفضل</option>
+  </select>
+  <span class="filter-count" id="filter-count">عرض 6 منتجات</span>
+</div>
+
+<div class="section-div" style="margin-top:20px;"></div>
+
+<!-- PRODUCTS -->
+<div class="products-section">
+  <div id="loading-state" class="loading-grid">
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line"></div><div class="skeleton-line short"></div><div class="skeleton-line shorter"></div></div></div>
+  </div>
+  <div id="products-grid" class="products-grid" style="display:none;"></div>
+  <div class="empty-state" id="empty-state">
+    <div class="empty-ico">◻</div>
+    <div class="empty-title">لا يوجد منتجات حالياً</div>
+    <div class="empty-sub">لم يتم إضافة منتجات لهذه النافذة بعد — تابعنا قريباً</div>
+  </div>
+</div>
+
+<script>
+// MOCK DATA
+const WINDOWS_DATA = {
+  A1: {
+    name: 'الجوالات', en: 'Smartphones', count: 6,
+    products: [
+      {id:'A1-001',code:'A1-001',name:'هاتف Xiaomi 14 Pro',en:'Xiaomi 14 Pro',type:'original',
+       specs:['Snapdragon 8 Gen 3','12GB RAM','512GB'],condition:96,price:3299,oldPrice:3999,
+       warranty:'سنة',available:true},
+      {id:'A1-002',code:'A1-002',name:'هاتف Samsung Galaxy S24',en:'Samsung Galaxy S24 Ultra',type:'original',
+       specs:['Exynos 2400','12GB RAM','256GB'],condition:99,price:4199,oldPrice:5200,
+       warranty:'سنة',available:true},
+      {id:'A1-003',code:'A1-003',name:'هاتف iPhone 15 Pro Max',en:'Apple iPhone 15 Pro Max',type:'refurbished',
+       specs:['A17 Pro','8GB RAM','256GB'],condition:88,price:4599,oldPrice:6500,
+       warranty:'6 أشهر',available:true},
+      {id:'A1-004',code:'A1-004',name:'هاتف OnePlus 12',en:'OnePlus 12',type:'alternative',
+       specs:['Snapdragon 8 Gen 3','16GB RAM','512GB'],condition:95,price:2199,oldPrice:2800,
+       warranty:'سنة',available:true},
+      {id:'A1-005',code:'A1-005',name:'هاتف Google Pixel 8 Pro',en:'Google Pixel 8 Pro',type:'original',
+       specs:['Google Tensor G3','12GB RAM','128GB'],condition:97,price:3799,oldPrice:4500,
+       warranty:'سنة',available:true},
+      {id:'A1-006',code:'A1-006',name:'هاتف Huawei Pura 70',en:'Huawei Pura 70 Pro',type:'alternative',
+       specs:['Kirin 9010','12GB RAM','512GB'],condition:94,price:2899,oldPrice:3600,
+       warranty:'سنة',available:true},
+    ]
+  },
+  A2: {
+    name: 'اللابتوبات', en: 'Laptops', count: 4,
+    products: [
+      {id:'A2-001',code:'A2-001',name:'لابتوب MacBook Pro M3',en:'Apple MacBook Pro M3 14"',type:'original',
+       specs:['Apple M3','16GB','512GB SSD'],condition:99,price:4299,oldPrice:5800,warranty:'سنة',available:true},
+      {id:'A2-002',code:'A2-002',name:'لابتوب Dell XPS 15',en:'Dell XPS 15 OLED',type:'original',
+       specs:['Core i9-13900H','32GB','1TB SSD'],condition:96,price:5199,oldPrice:6500,warranty:'سنة',available:true},
+      {id:'A2-003',code:'A2-003',name:'لابتوب Lenovo ThinkPad X1',en:'Lenovo ThinkPad X1 Carbon',type:'refurbished',
+       specs:['Core i7-1365U','16GB','512GB SSD'],condition:85,price:2299,oldPrice:4200,warranty:'6 أشهر',available:true},
+      {id:'A2-004',code:'A2-004',name:'لابتوب ASUS ROG Zephyrus',en:'ASUS ROG Zephyrus G14',type:'alternative',
+       specs:['Ryzen 9 7940HS','16GB','1TB SSD'],condition:93,price:3599,oldPrice:4500,warranty:'سنة',available:true},
+    ]
+  },
+  A3: {name:'قطع الكمبيوتر',en:'PC Parts',count:0,products:[]},
+  A4: {
+    name: 'الطابعات', en: 'Printers', count: 2,
+    products: [
+      {id:'A4-001',code:'A4-001',name:'طابعة HP LaserJet Pro',en:'HP LaserJet Pro M404dn',type:'original',
+       specs:['طباعة ليزر','38 ورقة/دقيقة','USB + Network'],condition:100,price:899,oldPrice:1200,warranty:'سنة',available:true},
+      {id:'A4-002',code:'A4-002',name:'طابعة Canon PIXMA',en:'Canon PIXMA G3470',type:'original',
+       specs:['طباعة حبر','حتى 4800dpi','Wi-Fi'],condition:100,price:649,oldPrice:850,warranty:'سنة',available:true},
+    ]
+  },
+  A5: {
+    name: 'الشاشات', en: 'Monitors', count: 3,
+    products: [
+      {id:'A5-001',code:'A5-001',name:'شاشة LG UltraWide 34"',en:'LG UltraWide 34WQ75C',type:'original',
+       specs:['34 بوصة','QHD 3440×1440','160Hz'],condition:98,price:1899,oldPrice:2500,warranty:'سنة',available:true},
+      {id:'A5-002',code:'A5-002',name:'شاشة Samsung Odyssey G7',en:'Samsung Odyssey G7 32"',type:'refurbished',
+       specs:['32 بوصة','4K UHD','144Hz'],condition:90,price:1299,oldPrice:2200,warranty:'6 أشهر',available:true},
+      {id:'A5-003',code:'A5-003',name:'شاشة ASUS ProArt 27"',en:'ASUS ProArt PA279CV',type:'original',
+       specs:['27 بوصة','4K UHD','USB-C 65W'],condition:100,price:1599,oldPrice:2000,warranty:'سنة',available:true},
+    ]
+  }
+};
+
+const BADGE_MAP = {original:'أصلي',alternative:'بديل',refurbished:'مجدد'};
+const BADGE_CLASS = {original:'badge-original',alternative:'badge-alt',refurbished:'badge-refurb'};
+const ICONS = {A1:'📱',A2:'💻',A3:'🖥',A4:'🖨',A5:'🖥'};
+
+let cartCount = 0;
+let currentWindow = 'A1';
+let currentFilter = 'all';
+let currentSort = 'default';
+let addedItems = new Set();
+
+// INIT
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.getElementById('loading-state').style.display = 'none';
+    renderProducts('A1');
+  }, 900);
+});
+
+function renderProducts(winCode, filter='all', sort='default'){
+  const grid = document.getElementById('products-grid');
+  const empty = document.getElementById('empty-state');
+  const data = WINDOWS_DATA[winCode];
+  let products = [...data.products];
+
+  // Filter
+  if(filter !== 'all') products = products.filter(p => p.type === filter);
+  // Sort
+  if(sort === 'price-asc') products.sort((a,b) => a.price - b.price);
+  if(sort === 'price-desc') products.sort((a,b) => b.price - a.price);
+  if(sort === 'condition') products.sort((a,b) => b.condition - a.condition);
+
+  document.getElementById('filter-count').textContent = `عرض ${products.length} منتجات`;
+
+  if(products.length === 0){
+    grid.style.display = 'none';
+    empty.classList.add('show');
+    return;
+  }
+  empty.classList.remove('show');
+  grid.style.display = 'grid';
+
+  grid.innerHTML = products.map(p => `
+    <div class="product-card" onclick="viewProduct('${p.id}')">
+      <div class="card-img">
+        <div class="card-img-bg"></div>
+        <div class="card-img-ico">${ICONS[winCode] || '◻'}</div>
+        <div class="card-img-corner tl"></div>
+        <div class="card-img-corner bl"></div>
+        <div class="card-badges">
+          <div class="badge-type ${BADGE_CLASS[p.type]}">${BADGE_MAP[p.type]}</div>
+          ${p.condition === 100 ? '<div class="badge-type badge-new">جديد</div>' : ''}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-code">${p.code} · ${winCode} · 1500</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-name-en">${p.en}</div>
+        <div class="card-specs">
+          ${p.specs.map(s => `<div class="card-spec">${s}</div>`).join('')}
+        </div>
+        <div class="card-condition">
+          <div class="cond-bar"><div class="cond-fill" style="width:${p.condition}%"></div></div>
+          <div class="cond-val">${p.condition}%</div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="card-price-block">
+          ${p.oldPrice ? `<div class="card-price-old">${p.oldPrice.toLocaleString('ar')} SAR</div>` : ''}
+          <div class="card-price">${p.price.toLocaleString('ar')}</div>
+          <div class="card-price-cur">ريال سعودي · SAR</div>
+        </div>
+        <button class="card-add-btn ${addedItems.has(p.id) ? 'added' : ''}"
+          id="add-btn-${p.id}"
+          onclick="addToCart(event,'${p.id}','${p.name}')">
+          ${addedItems.has(p.id) ? '✓ أُضيف' : '+ أضف للسلة'}
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function switchWindow(code, name, en, el){
+  // Update tabs
+  document.querySelectorAll('.win-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentWindow = code;
+  currentFilter = 'all';
+  currentSort = 'default';
+
+  // Reset filters
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn')[0].classList.add('active');
+
+  // Update header
+  document.getElementById('win-code-title').textContent = code;
+  document.getElementById('win-name-title').textContent = name;
+  document.getElementById('win-sub-title').textContent = en;
+  document.getElementById('current-window-path').textContent = name;
+  document.getElementById('win-count').textContent = WINDOWS_DATA[code].count + ' منتجات';
+
+  // Loading
+  const grid = document.getElementById('products-grid');
+  const loading = document.getElementById('loading-state');
+  const empty = document.getElementById('empty-state');
+  grid.style.display = 'none';
+  empty.classList.remove('show');
+  loading.style.display = 'grid';
+
+  setTimeout(() => {
+    loading.style.display = 'none';
+    renderProducts(code, 'all', 'default');
+  }, 600);
+}
+
+function filterProducts(type, el){
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentFilter = type;
+  renderProducts(currentWindow, type, currentSort);
+}
+
+function sortProducts(val){
+  currentSort = val;
+  renderProducts(currentWindow, currentFilter, val);
+}
+
+function addToCart(e, id, name){
+  e.stopPropagation();
+  if(addedItems.has(id)){
+    showToast('المنتج موجود في السلة بالفعل');
+    return;
+  }
+  addedItems.add(id);
+  cartCount++;
+  // Update button
+  const btn = document.getElementById('add-btn-'+id);
+  if(btn){ btn.textContent = '✓ أُضيف'; btn.classList.add('added'); }
+  // Update cart badge
+  const badge = document.getElementById('cart-count');
+  badge.textContent = cartCount;
+  badge.classList.add('show');
+  badge.style.animation = 'none';
+  setTimeout(() => badge.style.animation = '', 10);
+  showToast('✓ أُضيف للسلة — ' + name);
+}
+
+function viewProduct(id){
+  showToast('⊹ جاري فتح صفحة المنتج...');
+}
+
+function goBack(){
+  showToast('→ العودة لنوافذ جناح A');
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>

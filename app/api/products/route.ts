@@ -1,20 +1,17 @@
 import { NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 export async function GET() {
-  return NextResponse.json([
-    {
-      name: 'ثلاجة',
-      nameEn: 'REFRIGERATOR',
-      modelName: 'fridge',
-      price: 2499,
-      glow: '30,144,255',
-    },
-    {
-      name: 'تلفزيون',
-      nameEn: 'TELEVISION',
-      modelName: 'tv',
-      price: 3199,
-      glow: '180,100,255',
-    },
-  ])
+  try {
+    const products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, name: true, price: true, image: true },
+    })
+    return NextResponse.json(products)
+  } catch (error) {
+    console.error('PRODUCTS API ERROR:', error)
+    return NextResponse.json({ error: 'خطأ في جلب المنتجات', detail: String(error) }, { status: 500 })
+  }
 }

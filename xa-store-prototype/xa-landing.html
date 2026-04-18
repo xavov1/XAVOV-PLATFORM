@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XAVOV — المنصة العالمية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --gold-dim:rgba(201,168,76,0.12);
+  --gold-b:rgba(201,168,76,0.16);
+  --gold-b2:rgba(201,168,76,0.35);
+  --bg:#02040A;--bg2:#04060D;
+  --surface:#080D18;--surface2:#0B1020;--surface3:#0E1428;
+  --text:#EDE5D5;--text2:#B5AC9C;--muted:#524C44;
+  --red:#8B1A1A;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+/* NOISE */
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.022;mix-blend-mode:overlay;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;height:68px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 60px;
+  background:rgba(2,4,10,0.92);border-bottom:1px solid var(--gold-b);backdrop-filter:blur(24px);}
+.nav-logo{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.nav-logo-main{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);letter-spacing:6px;font-weight:600;line-height:1;}
+.nav-logo-sub{font-size:8px;letter-spacing:4px;color:rgba(201,168,76,0.35);font-family:'Cormorant Garamond',serif;}
+.nav-links{display:flex;align-items:center;gap:32px;}
+.nav-links a{font-size:12px;color:var(--muted);letter-spacing:1px;transition:color 0.2s;position:relative;}
+.nav-links a:hover{color:var(--text);}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;right:0;left:0;height:1px;background:var(--gold);transform:scaleX(0);transform-origin:right;transition:transform 0.25s;}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-lang{display:flex;align-items:center;gap:6px;padding:6px 14px;border:1px solid var(--gold-b);font-size:11px;color:var(--muted);letter-spacing:2px;cursor:pointer;transition:border-color 0.2s;}
+.nav-lang:hover{border-color:var(--gold-b2);}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:68px 48px 60px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 65% 65% at 50% 45%,rgba(201,168,76,0.055) 0%,transparent 65%),
+  radial-gradient(ellipse 30% 30% at 15% 70%,rgba(201,168,76,0.018) 0%,transparent 60%),
+  radial-gradient(ellipse 25% 25% at 85% 25%,rgba(201,168,76,0.015) 0%,transparent 60%);}
+.hero-vline{position:absolute;top:0;bottom:0;width:1px;
+  background:linear-gradient(180deg,transparent,rgba(201,168,76,0.07),transparent);}
+.hero-vline.l{right:calc(50% + 380px);}
+.hero-vline.r{left:calc(50% + 380px);}
+
+.hero-content{position:relative;z-index:1;}
+.hero-eye{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:7px;color:rgba(201,168,76,0.45);margin-bottom:24px;animation:fu 0.8s ease both;}
+
+/* OCTOPUS MASCOT */
+.hero-mascot{
+  font-size:80px;line-height:1;margin-bottom:20px;
+  animation:fu 0.8s 0.05s ease both;
+  filter:drop-shadow(0 0 40px rgba(201,168,76,0.15));
+}
+.hero-mascot svg{width:90px;height:90px;opacity:0.85;}
+
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(80px,13vw,160px);
+  color:var(--gold);font-weight:300;letter-spacing:12px;line-height:0.9;
+  text-shadow:0 0 100px rgba(201,168,76,0.1);
+  animation:fu 0.9s 0.1s ease both;}
+.hero-domain{font-family:'Cormorant Garamond',serif;font-size:13px;letter-spacing:6px;
+  color:rgba(201,168,76,0.3);margin-top:10px;margin-bottom:28px;
+  animation:fu 0.9s 0.15s ease both;}
+.hero-orn{display:flex;align-items:center;gap:14px;margin:0 auto 24px;animation:fu 1s 0.2s ease both;}
+.orn-l{width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.orn-l.r{background:linear-gradient(90deg,var(--gold),transparent);}
+.orn-d{width:4px;height:4px;background:var(--gold);border-radius:50%;opacity:0.45;}
+.hero-tagline-ar{font-size:clamp(18px,2.2vw,26px);color:var(--text);font-weight:300;
+  letter-spacing:1.5px;margin-bottom:6px;animation:fu 1s 0.25s ease both;}
+.hero-tagline-en{font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--muted);
+  font-style:italic;letter-spacing:2px;margin-bottom:36px;animation:fu 1s 0.3s ease both;}
+
+/* FEATURES ROW */
+.hero-features{display:flex;align-items:center;justify-content:center;gap:0;
+  border:1px solid var(--gold-b);animation:fu 1s 0.35s ease both;
+  max-width:760px;margin:0 auto;}
+.hero-feat{padding:12px 24px;font-size:11.5px;color:var(--muted);letter-spacing:0.5px;
+  border-left:1px solid var(--gold-b);white-space:nowrap;transition:color 0.2s,background 0.2s;}
+.hero-feat:last-child{border-left:none;}
+.hero-feat:hover{color:var(--gold);background:var(--gold-dim);}
+
+.hero-scroll{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;}
+.scroll-line{width:1px;height:44px;background:linear-gradient(180deg,var(--gold),transparent);
+  animation:scrollDrop 2.4s ease-in-out infinite;}
+
+@keyframes scrollDrop{
+  0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}
+  51%{transform:scaleY(1);transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+@keyframes fu{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION COMMONS */
+.sec{padding:96px 60px;position:relative;}
+.sec-lbl{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:6px;
+  color:rgba(201,168,76,0.45);text-align:center;margin-bottom:10px;}
+.sec-ttl{font-size:clamp(24px,3vw,36px);font-weight:700;text-align:center;margin-bottom:14px;letter-spacing:0.5px;}
+.sec-orn{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:64px;}
+.so-l{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.so-l.r{background:linear-gradient(90deg,var(--gold),transparent);}
+.so-d{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;}
+
+/* PORTALS */
+.portals-sec{background:radial-gradient(ellipse 100% 60% at 50% 0%,rgba(201,168,76,0.025) 0%,transparent 55%);}
+.portals-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:1180px;margin:0 auto;}
+.portal{border:1px solid var(--gold-b);background:var(--surface);position:relative;overflow:hidden;transition:border-color 0.4s,transform 0.3s;}
+.portal:hover{border-color:var(--gold-b2);transform:translateY(-3px);}
+.portal::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(201,168,76,0.05) 0%,transparent 65%);
+  opacity:0;transition:opacity 0.4s;pointer-events:none;}
+.portal:hover::before{opacity:1;}
+.portal-accent{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.5;}
+.portal-inner{padding:52px 48px;}
+.portal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;}
+.portal-id{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:5px;color:rgba(201,168,76,0.35);}
+.portal-ico{width:48px;height:48px;border:1px solid var(--gold-b);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--gold);opacity:0.6;}
+.portal-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.2vw,44px);color:var(--gold);font-weight:300;letter-spacing:4px;margin-bottom:4px;line-height:1;}
+.portal-name-ar{font-size:18px;font-weight:700;margin-bottom:5px;}
+.portal-name-en{font-family:'Cormorant Garamond',serif;font-size:12px;color:var(--muted);font-style:italic;letter-spacing:2px;margin-bottom:24px;}
+.portal-div{height:1px;background:linear-gradient(90deg,var(--gold-b2),transparent);margin-bottom:24px;}
+.portal-desc{font-size:13px;color:var(--muted);line-height:1.9;margin-bottom:36px;}
+.portal-list{display:flex;flex-direction:column;gap:0;margin-bottom:36px;}
+.portal-list-item{display:flex;align-items:center;gap:10px;padding:9px 0;
+  border-bottom:1px solid rgba(201,168,76,0.06);font-size:12.5px;color:var(--text2);}
+.portal-list-item:last-child{border-bottom:none;}
+.p-dot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0.5;flex-shrink:0;}
+.portal-btn{display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:13px 24px;border:1px solid var(--gold);color:var(--gold);
+  font-size:13px;font-family:'Cairo',sans-serif;letter-spacing:0.5px;
+  background:transparent;cursor:pointer;transition:background 0.25s,color 0.25s;margin-bottom:10px;}
+.portal-btn:hover{background:var(--gold);color:var(--bg);}
+.portal-btn-arr{transition:transform 0.25s;}
+.portal-btn:hover .portal-btn-arr{transform:translateX(-4px);}
+.portal-btn2{display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:12px 24px;border:1px solid rgba(201,168,76,0.18);color:var(--muted);
+  font-size:13px;font-family:'Cairo',sans-serif;letter-spacing:0.5px;
+  background:transparent;cursor:pointer;transition:border-color 0.25s,color 0.25s;}
+.portal-btn2:hover{border-color:var(--gold-b2);color:var(--text2);}
+
+/* ABC SUB-CARDS */
+.abc-cards{display:flex;flex-direction:column;gap:8px;margin-bottom:36px;}
+.abc-card{border:1px solid var(--gold-b);background:var(--surface2);padding:18px 22px;
+  display:grid;grid-template-columns:40px 1fr auto;align-items:center;gap:14px;
+  transition:border-color 0.3s,background 0.3s;cursor:pointer;}
+.abc-card:hover{border-color:var(--gold-b2);background:var(--surface3);}
+.abc-card-locked{opacity:0.45;cursor:not-allowed;}
+.abc-card-locked:hover{border-color:var(--gold-b);background:var(--surface2);}
+.abc-ico{width:40px;height:40px;border:1px solid var(--gold-b);display:flex;align-items:center;justify-content:center;font-size:15px;color:var(--gold);opacity:0.6;flex-shrink:0;}
+.abc-name{font-family:'Cormorant Garamond',serif;font-size:15px;color:var(--gold);letter-spacing:2px;margin-bottom:2px;font-weight:600;}
+.abc-ar{font-size:11.5px;color:var(--text2);margin-bottom:1px;}
+.abc-en{font-size:10px;color:var(--muted);font-style:italic;font-family:'Cormorant Garamond',serif;letter-spacing:1px;}
+.abc-arr{font-size:13px;color:var(--muted);opacity:0.4;}
+.locked-lbl{font-size:9px;letter-spacing:2px;color:var(--muted);padding:2px 8px;border:1px solid var(--gold-b);}
+
+/* ABOUT */
+.about-sec{background:var(--surface);border-top:1px solid var(--gold-b);border-bottom:1px solid var(--gold-b);}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1000px;margin:0 auto;}
+.about-card{border:1px solid var(--gold-b);background:var(--bg2);padding:40px 36px;
+  position:relative;transition:border-color 0.3s,transform 0.3s;}
+.about-card:hover{border-color:var(--gold-b2);transform:translateY(-2px);}
+.about-card-ico{font-size:28px;margin-bottom:18px;display:block;line-height:1;}
+.about-card-title-en{font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:4px;color:var(--muted);font-style:italic;margin-bottom:4px;}
+.about-card-title{font-size:18px;font-weight:700;margin-bottom:16px;letter-spacing:0.5px;}
+.about-card-desc{font-size:13px;color:var(--muted);line-height:1.9;}
+
+/* PHILOSOPHY */
+.phil-sec{background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,0.025) 0%,transparent 65%);}
+.phil-wrap{max-width:860px;margin:0 auto;border:1px solid var(--gold-b);background:var(--surface);}
+.phil-header{padding:40px 52px 32px;border-bottom:1px solid var(--gold-b);}
+.phil-header-lbl{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:5px;color:rgba(201,168,76,0.4);margin-bottom:6px;}
+.phil-header-title{font-size:20px;font-weight:700;letter-spacing:1px;}
+.phil-items{padding:0 52px;}
+.phil-item{display:grid;grid-template-columns:48px 1fr;gap:24px;align-items:start;
+  padding:28px 0;border-bottom:1px solid rgba(201,168,76,0.06);}
+.phil-item:last-child{border-bottom:none;}
+.phil-num{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);
+  font-weight:300;line-height:1;opacity:0.6;}
+.phil-text{font-size:14px;color:var(--muted);line-height:1.85;padding-top:6px;}
+.phil-text strong{color:var(--text);font-weight:600;}
+.phil-footer{padding:24px 52px;border-top:1px solid var(--gold-b);text-align:center;}
+.phil-footer-quote{font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;
+  letter-spacing:2px;color:rgba(201,168,76,0.4);}
+
+/* CONTACT */
+.contact-sec{background:var(--surface);border-top:1px solid var(--gold-b);}
+.contact-wrap{max-width:720px;margin:0 auto;}
+.contact-form{border:1px solid var(--gold-b);background:var(--bg2);}
+.form-inner{padding:52px;}
+.form-field{margin-bottom:12px;}
+.form-field input,.form-field textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--gold-b);
+  padding:14px 18px;font-size:13px;color:var(--text);font-family:'Cairo',sans-serif;
+  letter-spacing:0.3px;outline:none;transition:border-color 0.25s;resize:none;}
+.form-field input::placeholder,.form-field textarea::placeholder{color:var(--muted);}
+.form-field input:focus,.form-field textarea:focus{border-color:var(--gold-b2);}
+.form-field textarea{height:120px;}
+.form-submit{width:100%;padding:14px;background:transparent;border:1px solid var(--gold);
+  color:var(--gold);font-size:13px;font-family:'Cairo',sans-serif;letter-spacing:1px;
+  cursor:pointer;transition:background 0.25s,color 0.25s;margin-top:4px;}
+.form-submit:hover{background:var(--gold);color:var(--bg);}
+
+/* FOOTER */
+footer{border-top:1px solid var(--gold-b);padding:32px 60px;
+  display:flex;align-items:center;justify-content:space-between;}
+.foot-logo{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);letter-spacing:5px;}
+.foot-center{display:flex;align-items:center;gap:24px;}
+.foot-item{font-size:10px;letter-spacing:2px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.foot-item::before{content:'·';color:var(--gold-b);}
+.foot-item:first-child::before{display:none;}
+.foot-right{font-size:10px;letter-spacing:1px;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-logo-main">XAVOV</span>
+    <span class="nav-logo-sub">GLOBAL COMMERCE PLATFORM</span>
+  </div>
+  <div class="nav-links">
+    <a href="#about">من نحن</a>
+    <a href="#contact">تواصل</a>
+  </div>
+  <div class="nav-lang">▼ AR 🇸🇦</div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-vline l"></div>
+  <div class="hero-vline r"></div>
+  <div class="hero-content">
+    <p class="hero-eye">XAVOV · GLOBAL DIGITAL COMMERCE PLATFORM</p>
+
+    <!-- Octopus SVG mascot -->
+    <div class="hero-mascot">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Body -->
+        <ellipse cx="50" cy="38" rx="22" ry="24" stroke="#C9A84C" stroke-width="1.5" fill="none"/>
+        <!-- Eyes -->
+        <circle cx="43" cy="34" r="3.5" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+        <circle cx="57" cy="34" r="3.5" stroke="#C9A84C" stroke-width="1.2" fill="none"/>
+        <circle cx="43" cy="34" r="1.2" fill="#C9A84C" opacity="0.7"/>
+        <circle cx="57" cy="34" r="1.2" fill="#C9A84C" opacity="0.7"/>
+        <!-- Tentacles -->
+        <path d="M32 56 Q28 68 30 78 Q32 86 28 92" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M38 60 Q36 72 38 82 Q40 90 37 96" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M44 62 Q44 74 46 84 Q47 92 45 98" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M50 63 Q50 75 52 85 Q53 93 51 99" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M56 62 Q58 74 56 84 Q55 92 57 98" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M62 60 Q64 72 62 82 Q60 90 63 96" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M68 56 Q72 68 70 78 Q68 86 72 92" stroke="#C9A84C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <h1 class="hero-title">XAVOV</h1>
+    <p class="hero-domain">xavov.com</p>
+
+    <div class="hero-orn">
+      <div class="orn-l"></div><div class="orn-d"></div><div class="orn-l r"></div>
+    </div>
+
+    <p class="hero-tagline-ar">حيث التسوق يصبح تجربة</p>
+    <p class="hero-tagline-en">Where shopping becomes an experience</p>
+
+    <div class="hero-features">
+      <div class="hero-feat">أسعار مكسورة</div>
+      <div class="hero-feat">عرض ثلاثي الأبعاد</div>
+      <div class="hero-feat">مزادات</div>
+      <div class="hero-feat">بورصة</div>
+      <div class="hero-feat">عضويات حصرية</div>
+    </div>
+  </div>
+  <div class="hero-scroll"><div class="scroll-line"></div></div>
+</div>
+
+<!-- PORTALS -->
+<section class="sec portals-sec" id="portals">
+  <p class="sec-lbl">THE PORTALS</p>
+  <h2 class="sec-ttl">بوابات المنصة</h2>
+  <div class="sec-orn"><div class="so-l"></div><div class="so-d"></div><div class="so-l r"></div></div>
+
+  <div class="portals-grid">
+
+    <!-- XA STORE -->
+    <div class="portal">
+      <div class="portal-accent"></div>
+      <div class="portal-inner">
+        <div class="portal-hdr">
+          <span class="portal-id">PORTAL · 01</span>
+          <div class="portal-ico">⊹</div>
+        </div>
+        <div class="portal-name">XA STORE</div>
+        <div class="portal-name-ar">المتجر</div>
+        <div class="portal-name-en">Store Portal</div>
+        <div class="portal-div"></div>
+        <p class="portal-desc">تسوّق في أجنحة XAVOV — منتجات مفحوصة ومصنفة من أفضل الموردين حول العالم</p>
+
+        <div style="border:1px solid var(--gold-b);background:var(--surface2);padding:60px 36px;text-align:center;margin-bottom:36px;position:relative;overflow:hidden;">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,0.05) 0%,transparent 70%);pointer-events:none;"></div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:56px;color:var(--gold);font-weight:300;line-height:1;opacity:0.18;letter-spacing:10px;margin-bottom:18px;">XA STORE</div>
+          <div style="font-size:9px;letter-spacing:6px;color:var(--muted);font-family:'Cormorant Garamond',serif;">ENTER TO EXPLORE</div>
+        </div>
+
+        <a href="xa-store-sections.html" class="portal-btn">دخول المتجر — Enter <span class="portal-btn-arr">←</span></a>
+        
+      </div>
+    </div>
+
+    <!-- XA-A-B-C -->
+    <div class="portal">
+      <div class="portal-accent"></div>
+      <div class="portal-inner">
+        <div class="portal-hdr">
+          <span class="portal-id">PORTAL · 02</span>
+          <div class="portal-ico">⬡</div>
+        </div>
+        <div class="portal-name">XA-A-B-C</div>
+        <div class="portal-name-ar">بوابة الشركاء</div>
+        <div class="portal-name-en">Partners Portal</div>
+        <div class="portal-div"></div>
+        <p class="portal-desc">بوابة مخصصة للشركاء المعتمدين من قِبل XAVOV — للدخول أو التسجيل انتقل للبوابة</p>
+
+        <!-- Decorative locked visual -->
+        <div style="
+          border:1px solid var(--gold-b);
+          background:var(--surface2);
+          padding:52px 36px;
+          text-align:center;
+          margin-bottom:36px;
+          position:relative;
+          overflow:hidden;
+        ">
+          <div style="
+            position:absolute;inset:0;
+            background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,0.04) 0%,transparent 70%);
+            pointer-events:none;
+          "></div>
+          <div style="
+            font-family:'Cormorant Garamond',serif;
+            font-size:52px;color:var(--gold);
+            font-weight:300;line-height:1;
+            opacity:0.25;letter-spacing:8px;
+            margin-bottom:16px;
+          ">XA-A-B-C</div>
+          <div style="
+            font-size:10px;letter-spacing:5px;
+            color:var(--muted);
+            font-family:'Cormorant Garamond',serif;
+          ">AUTHORIZED ACCESS ONLY</div>
+        </div>
+
+        <a href="#" class="portal-btn">دخول الشركاء — Enter <span class="portal-btn-arr">←</span></a>
+        <a href="#" class="portal-btn2">طلب الانضمام ←</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="sec about-sec" id="about">
+  <p class="sec-lbl">ABOUT</p>
+  <h2 class="sec-ttl">من نحن</h2>
+  <div class="sec-orn"><div class="so-l"></div><div class="so-d"></div><div class="so-l r"></div></div>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <span class="about-card-ico">🌐</span>
+      <div class="about-card-title-en">Global Platform</div>
+      <div class="about-card-title">منصة عالمية</div>
+      <p class="about-card-desc">XAVOV منصة تجارة إلكترونية عالمية تربط الموردين المعتمدين بالمشترين حول العالم بشفافية كاملة.</p>
+    </div>
+    <div class="about-card">
+      <span class="about-card-ico">🔍</span>
+      <div class="about-card-title-en">Full Transparency</div>
+      <div class="about-card-title">شفافية كاملة</div>
+      <p class="about-card-desc">نظام عرض خماسي فريد يتيح للعميل رؤية المنتج من الداخل قبل الشراء — لا مفاجآت.</p>
+    </div>
+    <div class="about-card">
+      <span class="about-card-ico">⚡</span>
+      <div class="about-card-title-en">Specialized Wings</div>
+      <div class="about-card-title">أجنحة متخصصة</div>
+      <p class="about-card-desc">6 أجنحة متخصصة، 32 نافذة، وخبير AI في كل جناح يوجهك للمنتج المناسب.</p>
+    </div>
+    <div class="about-card">
+      <span class="about-card-ico">💎</span>
+      <div class="about-card-title-en">Integrated System</div>
+      <div class="about-card-title">نظام متكامل</div>
+      <p class="about-card-desc">مزادات حصرية، بورصة استثمارية، نقاط مكافآت، وعضويات متميزة — تجربة لا مثيل لها.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="sec phil-sec">
+  <p class="sec-lbl">XAVOV PHILOSOPHY</p>
+  <h2 class="sec-ttl">فلسفة المنصة</h2>
+  <div class="sec-orn"><div class="so-l"></div><div class="so-d"></div><div class="so-l r"></div></div>
+
+  <div class="phil-wrap">
+    <div class="phil-header">
+      <div class="phil-header-lbl">XAVOV PHILOSOPHY — فلسفة المنصة</div>
+      <div class="phil-header-title">المبادئ التي تقوم عليها XAVOV</div>
+    </div>
+    <div class="phil-items">
+      <div class="phil-item">
+        <div class="phil-num">١</div>
+        <p class="phil-text">في XAVOV، تختلف قيمة المنتجات بحسب نوعها: <strong>أصلي، بديل مثالي، أو مجدد.</strong></p>
+      </div>
+      <div class="phil-item">
+        <div class="phil-num">٢</div>
+        <p class="phil-text">لا يتم تقييم المنتجات بشكل موحد، بل تُحدد قيمتها بناءً على <strong>حالتها الفعلية</strong> ونتيجة الفحص داخل النظام.</p>
+      </div>
+      <div class="phil-item">
+        <div class="phil-num">٣</div>
+        <p class="phil-text">يجب أن تتابع مسار <strong>الفحص والتفكيك</strong> كما يظهر داخل الأجنحة، حيث تُعرض جميع مكونات المنتج بوضوح قبل الشراء.</p>
+      </div>
+      <div class="phil-item">
+        <div class="phil-num">٤</div>
+        <p class="phil-text">تعتمد القيمة النهائية على <strong>دقة الوصف</strong> وتطابقه مع نتائج الفحص المعتمدة.</p>
+      </div>
+      <div class="phil-item">
+        <div class="phil-num">٥</div>
+        <p class="phil-text">الأسعار داخل XAVOV تُحدد وفق نظام المنصة — لذلك قد تجد <strong>أسعاراً لا يمكن الوصول إليها</strong> في منصات أخرى أو المتاجر المحلية.</p>
+      </div>
+    </div>
+    <div class="phil-footer">
+      <p class="phil-footer-quote">Where value meets transparency</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec contact-sec" id="contact">
+  <p class="sec-lbl">CONTACT</p>
+  <h2 class="sec-ttl">تواصل</h2>
+  <div class="sec-orn"><div class="so-l"></div><div class="so-d"></div><div class="so-l r"></div></div>
+
+  <div class="contact-wrap">
+    <div class="contact-form">
+      <div class="form-inner">
+        <div class="form-field">
+          <input type="text" placeholder="الاسم — Name">
+        </div>
+        <div class="form-field">
+          <input type="email" placeholder="البريد الإلكتروني — Email">
+        </div>
+        <div class="form-field">
+          <textarea placeholder="رسالتك — Message"></textarea>
+        </div>
+        <button class="form-submit">إرسال — Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="foot-logo">XAVOV</span>
+  <div class="foot-center">
+    <span class="foot-item">6 أجنحة</span>
+    <span class="foot-item">32 نافذة</span>
+    <span class="foot-item">4 بوابات</span>
+    <span class="foot-item">منصة عالمية</span>
+  </div>
+  <span class="foot-right">جميع الحقوق محفوظة © 2025</span>
+</footer>
+
+</body>
+</html>

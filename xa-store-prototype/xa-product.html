@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عرض المنتج — XAVOV</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-b:rgba(201,168,76,0.16);--gold-b2:rgba(201,168,76,0.35);
+  --gold-glow:rgba(201,168,76,0.08);
+  --bg:#02040A;--bg2:#04060D;
+  --surface:#080D18;--surface2:#0B1020;--surface3:#0E1428;
+  --text:#EDE5D5;--text2:#B5AC9C;--muted:#524C44;
+  --green:#1A5C3A;--green-light:#2ECC71;
+  --red:#8B1A1A;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.022;mix-blend-mode:overlay;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;height:64px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 48px;
+  background:rgba(2,4,10,0.94);border-bottom:1px solid var(--gold-b);backdrop-filter:blur(24px);}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);letter-spacing:5px;font-weight:600;}
+.nav-path{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);letter-spacing:0.5px;}
+.nav-path-sep{color:var(--gold-b2);font-size:10px;}
+.nav-path-cur{color:var(--text2);}
+.nav-back{font-size:11.5px;color:var(--muted);letter-spacing:1px;transition:color 0.2s;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--text);}
+
+/* LAYER INDICATOR */
+.layer-indicator{
+  position:fixed;left:28px;top:50%;transform:translateY(-50%);
+  z-index:100;display:flex;flex-direction:column;gap:16px;align-items:center;
+}
+.layer-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);cursor:pointer;transition:all 0.3s;position:relative;}
+.layer-dot.active{background:var(--gold);box-shadow:0 0 8px rgba(201,168,76,0.5);}
+.layer-dot::after{
+  content:attr(data-label);
+  position:absolute;right:16px;top:50%;transform:translateY(-50%);
+  font-size:9px;letter-spacing:2px;color:var(--muted);white-space:nowrap;
+  opacity:0;transition:opacity 0.2s;font-family:'Cormorant Garamond',serif;
+}
+.layer-dot:hover::after{opacity:1;}
+.layer-dot.active::after{opacity:1;color:var(--gold);}
+.layer-line{width:1px;height:20px;background:var(--gold-b);}
+
+/* MAIN LAYOUT */
+.product-page{padding:64px 0 80px;position:relative;z-index:1;}
+
+/* LAYER COMMONS */
+.layer{
+  padding:56px 80px;
+  border-bottom:1px solid var(--gold-b);
+  position:relative;
+}
+.layer-num{
+  position:absolute;top:52px;left:48px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:80px;color:var(--gold);font-weight:300;
+  line-height:1;opacity:0.06;user-select:none;
+}
+.layer-tag{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:4px 14px;border:1px solid var(--gold-b);
+  font-family:'Cormorant Garamond',serif;font-size:9px;
+  letter-spacing:4px;color:rgba(201,168,76,0.5);
+  margin-bottom:36px;
+}
+.layer-tag-dot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0.5;}
+
+/* ═══════════════════════════════
+   LAYER 1 — IDENTITY
+═══════════════════════════════ */
+.layer-1{
+  background:
+    radial-gradient(ellipse 70% 80% at 70% 50%,rgba(201,168,76,0.04) 0%,transparent 65%),
+    var(--bg2);
+}
+.l1-grid{display:grid;grid-template-columns:1fr 360px;gap:56px;align-items:start;}
+.l1-left{}
+.l1-codes{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.l1-code{
+  font-family:'Cormorant Garamond',serif;font-size:11px;letter-spacing:3px;
+  color:var(--muted);padding:4px 12px;border:1px solid var(--gold-b);
+}
+.l1-type{
+  font-size:10px;letter-spacing:3px;padding:4px 12px;
+  font-family:'Cormorant Garamond',serif;
+}
+.type-original{background:rgba(46,204,113,0.08);color:#2ECC71;border:1px solid rgba(46,204,113,0.25);}
+.type-alt{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--gold-b);}
+.type-refurb{background:rgba(52,152,219,0.08);color:#5DADE2;border:1px solid rgba(52,152,219,0.25);}
+
+.l1-name{font-size:clamp(28px,3.5vw,44px);font-weight:700;letter-spacing:0.3px;margin-bottom:8px;line-height:1.15;}
+.l1-name-en{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--muted);font-style:italic;letter-spacing:2px;margin-bottom:24px;}
+.l1-divider{height:1px;background:linear-gradient(90deg,var(--gold-b2),transparent);margin-bottom:24px;}
+.l1-summary{font-size:14px;color:var(--text2);line-height:1.85;max-width:560px;}
+
+.l1-right{
+  border:1px solid var(--gold-b);background:var(--surface);padding:32px;
+  position:sticky;top:80px;
+}
+.l1-price-lbl{font-size:10px;letter-spacing:3px;color:var(--muted);margin-bottom:8px;font-family:'Cormorant Garamond',serif;}
+.l1-price{font-family:'Cormorant Garamond',serif;font-size:52px;color:var(--gold);font-weight:300;line-height:1;margin-bottom:4px;}
+.l1-price-cur{font-size:14px;color:var(--muted);letter-spacing:2px;margin-bottom:20px;}
+.l1-price-compare{display:flex;align-items:center;gap:8px;margin-bottom:24px;}
+.l1-compare-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;}
+.l1-compare-val{font-size:13px;color:var(--muted);text-decoration:line-through;opacity:0.6;}
+.l1-compare-save{font-size:10px;color:#2ECC71;letter-spacing:1px;padding:2px 8px;background:rgba(46,204,113,0.08);border:1px solid rgba(46,204,113,0.2);}
+.l1-status-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--gold-b);}
+.status-dot{width:5px;height:5px;border-radius:50%;background:#2ECC71;flex-shrink:0;}
+.l1-status-txt{font-size:12px;color:var(--text2);}
+
+/* ═══════════════════════════════
+   LAYER 2 — VISUAL
+═══════════════════════════════ */
+.layer-2{background:var(--bg);}
+.l2-grid{display:grid;grid-template-columns:80px 1fr 280px;gap:20px;align-items:start;}
+
+.l2-thumbs{display:flex;flex-direction:column;gap:10px;}
+.l2-thumb{
+  width:80px;height:80px;border:1px solid var(--gold-b);
+  background:var(--surface);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color 0.25s;position:relative;overflow:hidden;
+}
+.l2-thumb.active{border-color:var(--gold);}
+.l2-thumb:hover{border-color:var(--gold-b2);}
+.l2-thumb-inner{width:100%;height:100%;background:linear-gradient(135deg,var(--surface2),var(--surface3));display:flex;align-items:center;justify-content:center;}
+.l2-thumb-lbl{font-family:'Cormorant Garamond',serif;font-size:9px;letter-spacing:2px;color:var(--muted);}
+
+.l2-main{
+  border:1px solid var(--gold-b);background:var(--surface);
+  aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.l2-main-bg{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%,rgba(201,168,76,0.04) 0%,transparent 70%);
+}
+.l2-main-placeholder{
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+  position:relative;z-index:1;
+}
+.l2-main-ico{font-family:'Cormorant Garamond',serif;font-size:72px;color:var(--gold);opacity:0.15;line-height:1;}
+.l2-main-lbl{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:4px;color:var(--muted);}
+.l2-corner{position:absolute;width:20px;height:20px;border-color:var(--gold);border-style:solid;opacity:0.4;}
+.l2-corner.tl{top:16px;right:16px;border-width:1px 1px 0 0;}
+.l2-corner.tr{top:16px;left:16px;border-width:1px 0 0 1px;}
+.l2-corner.bl{bottom:16px;right:16px;border-width:0 1px 1px 0;}
+.l2-corner.br{bottom:16px;left:16px;border-width:0 0 1px 1px;}
+.l2-view-badge{
+  position:absolute;bottom:16px;right:16px;
+  background:rgba(2,4,10,0.8);border:1px solid var(--gold-b);
+  padding:4px 12px;font-size:9px;letter-spacing:3px;color:var(--gold);
+  font-family:'Cormorant Garamond',serif;backdrop-filter:blur(8px);
+}
+
+.l2-info{display:flex;flex-direction:column;gap:10px;}
+.l2-info-card{border:1px solid var(--gold-b);background:var(--surface);padding:18px 20px;}
+.l2-info-lbl{font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:6px;font-family:'Cormorant Garamond',serif;}
+.l2-info-val{font-size:14px;font-weight:600;color:var(--text);}
+.l2-info-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+.l2-views-row{display:flex;gap:8px;margin-top:20px;}
+.l2-view-btn{
+  flex:1;padding:10px 8px;border:1px solid var(--gold-b);
+  background:transparent;font-size:10px;letter-spacing:1.5px;
+  color:var(--muted);font-family:'Cormorant Garamond',serif;
+  cursor:pointer;transition:all 0.25s;text-align:center;
+}
+.l2-view-btn:hover{border-color:var(--gold-b2);color:var(--gold);}
+.l2-view-btn.active{border-color:var(--gold);color:var(--gold);background:var(--gold-glow);}
+
+/* ═══════════════════════════════
+   LAYER 3 — INSPECTION
+═══════════════════════════════ */
+.layer-3{background:var(--surface);}
+.l3-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.l3-card{border:1px solid var(--gold-b);background:var(--bg2);padding:28px;}
+.l3-card-title{font-size:11px;letter-spacing:3px;color:var(--gold);font-family:'Cormorant Garamond',serif;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.l3-card-title::after{content:'';flex:1;height:1px;background:var(--gold-b);}
+.l3-spec{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(201,168,76,0.06);}
+.l3-spec:last-child{border-bottom:none;}
+.l3-spec-key{font-size:12px;color:var(--muted);}
+.l3-spec-val{font-size:12.5px;color:var(--text2);font-weight:600;text-align:left;}
+
+.l3-condition{border:1px solid var(--gold-b);background:var(--bg2);padding:28px;}
+.l3-condition-title{font-size:11px;letter-spacing:3px;color:var(--gold);font-family:'Cormorant Garamond',serif;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.l3-condition-title::after{content:'';flex:1;height:1px;background:var(--gold-b);}
+.l3-meter{margin-bottom:16px;}
+.l3-meter-lbl{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.l3-meter-key{font-size:12px;color:var(--muted);}
+.l3-meter-val{font-size:12px;color:var(--gold);}
+.l3-meter-bar{height:3px;background:var(--surface2);border-radius:0;overflow:hidden;}
+.l3-meter-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-light));transition:width 0.5s;}
+.l3-note{border-right:2px solid var(--gold);padding:12px 16px;background:var(--gold-glow);margin-top:20px;}
+.l3-note-lbl{font-size:9px;letter-spacing:3px;color:var(--gold);margin-bottom:4px;font-family:'Cormorant Garamond',serif;}
+.l3-note-txt{font-size:12.5px;color:var(--text2);line-height:1.7;}
+
+/* ═══════════════════════════════
+   LAYER 4 — TRUST
+═══════════════════════════════ */
+.layer-4{background:var(--bg2);}
+.l4-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+.trust-card{border:1px solid var(--gold-b);background:var(--surface);padding:28px 24px;text-align:center;position:relative;overflow:hidden;transition:border-color 0.3s;}
+.trust-card:hover{border-color:var(--gold-b2);}
+.trust-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,0.04) 0%,transparent 70%);pointer-events:none;}
+.trust-ico{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--gold);margin-bottom:14px;display:block;line-height:1;opacity:0.7;}
+.trust-status{font-size:10px;letter-spacing:3px;margin-bottom:8px;padding:3px 12px;display:inline-block;}
+.trust-verified{background:rgba(46,204,113,0.08);color:#2ECC71;border:1px solid rgba(46,204,113,0.22);}
+.trust-active{background:rgba(201,168,76,0.08);color:var(--gold);border:1px solid var(--gold-b);}
+.trust-title{font-size:15px;font-weight:700;margin-bottom:4px;}
+.trust-sub{font-size:11px;color:var(--muted);line-height:1.6;}
+
+.l4-serial{border:1px solid var(--gold-b);background:var(--surface);padding:28px 32px;}
+.l4-serial-title{font-size:10px;letter-spacing:4px;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-bottom:16px;}
+.l4-serial-code{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(18px,2.5vw,26px);color:var(--gold);
+  letter-spacing:6px;font-weight:300;
+  border:1px solid var(--gold-b);background:var(--bg2);
+  padding:16px 24px;display:inline-block;margin-bottom:12px;
+}
+.l4-serial-note{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+.l4-serial-dot{width:3px;height:3px;background:var(--gold);border-radius:50%;opacity:0.4;}
+
+/* ═══════════════════════════════
+   LAYER 5 — PURCHASE
+═══════════════════════════════ */
+.layer-5{
+  background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%);
+  border-bottom:none;
+}
+.l5-grid{display:grid;grid-template-columns:1fr 400px;gap:48px;align-items:start;}
+.l5-left{}
+.l5-summary-title{font-size:14px;letter-spacing:2px;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-bottom:20px;}
+.l5-summary-items{display:flex;flex-direction:column;gap:0;margin-bottom:32px;}
+.l5-sum-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(201,168,76,0.06);}
+.l5-sum-item:last-child{border-bottom:none;}
+.l5-sum-key{font-size:13px;color:var(--muted);}
+.l5-sum-val{font-size:13px;color:var(--text2);font-weight:600;}
+.l5-sum-val.gold{color:var(--gold);}
+
+.l5-actions{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.l5-action-row{display:flex;gap:8px;}
+.l5-action-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 16px;font-size:12px;font-family:'Cairo',sans-serif;
+  letter-spacing:0.5px;cursor:pointer;transition:all 0.25s;border:1px solid var(--gold-b);
+  background:transparent;color:var(--muted);
+}
+.l5-action-btn:hover{border-color:var(--gold-b2);color:var(--text2);}
+
+.l5-right{position:sticky;top:80px;}
+.l5-buy-card{border:1px solid var(--gold-b2);background:var(--surface);padding:36px;position:relative;overflow:hidden;}
+.l5-buy-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(201,168,76,0.05) 0%,transparent 65%);pointer-events:none;}
+.l5-buy-accent{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+
+.l5-qty-lbl{font-size:10px;letter-spacing:3px;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-bottom:10px;}
+.l5-qty-row{display:flex;align-items:center;gap:0;margin-bottom:24px;border:1px solid var(--gold-b);}
+.l5-qty-btn{width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--gold);font-size:18px;cursor:pointer;transition:background 0.2s;border:none;outline:none;font-family:'Cairo',sans-serif;}
+.l5-qty-btn:hover{background:var(--surface3);}
+.l5-qty-val{flex:1;text-align:center;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--text);font-weight:300;background:transparent;border:none;outline:none;border-right:1px solid var(--gold-b);border-left:1px solid var(--gold-b);}
+
+.l5-total-lbl{font-size:10px;letter-spacing:3px;color:var(--muted);font-family:'Cormorant Garamond',serif;margin-bottom:6px;}
+.l5-total{font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--gold);font-weight:300;line-height:1;margin-bottom:4px;}
+.l5-total-cur{font-size:12px;color:var(--muted);letter-spacing:2px;margin-bottom:24px;}
+
+.l5-cart-btn{
+  width:100%;padding:16px;
+  background:var(--gold);color:var(--bg);
+  font-size:14px;font-family:'Cairo',sans-serif;font-weight:700;
+  letter-spacing:0.5px;cursor:pointer;
+  border:none;transition:background 0.25s;margin-bottom:10px;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.l5-cart-btn:hover{background:var(--gold-light);}
+.l5-save-btn{
+  width:100%;padding:13px;
+  background:transparent;color:var(--muted);
+  font-size:13px;font-family:'Cairo',sans-serif;
+  letter-spacing:0.5px;cursor:pointer;
+  border:1px solid rgba(201,168,76,0.18);transition:all 0.25s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.l5-save-btn:hover{border-color:var(--gold-b2);color:var(--text2);}
+
+.l5-guarantee{display:flex;align-items:center;gap:10px;margin-top:20px;padding:12px;border:1px solid rgba(46,204,113,0.15);background:rgba(46,204,113,0.04);}
+.l5-guarantee-ico{font-size:16px;color:#2ECC71;flex-shrink:0;}
+.l5-guarantee-txt{font-size:11px;color:var(--muted);line-height:1.5;}
+
+/* FIVE PHASE PROGRESS */
+.phase-bar{
+  display:flex;align-items:center;gap:0;
+  max-width:900px;margin:0 auto 48px;
+  border:1px solid var(--gold-b);background:var(--surface);
+}
+.phase-item{
+  flex:1;padding:14px 12px;text-align:center;
+  border-left:1px solid var(--gold-b);cursor:pointer;
+  transition:background 0.25s;position:relative;
+}
+.phase-item:last-child{border-left:none;}
+.phase-item:hover{background:var(--surface2);}
+.phase-item.active{background:var(--gold-glow);}
+.phase-item.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--gold);}
+.phase-num{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--muted);margin-bottom:3px;letter-spacing:1px;}
+.phase-name{font-size:11px;font-weight:600;color:var(--text2);}
+.phase-item.active .phase-name{color:var(--gold);}
+.phase-item.active .phase-num{color:rgba(201,168,76,0.5);}
+
+footer{border-top:1px solid var(--gold-b);padding:28px 48px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.foot-logo{font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--gold);letter-spacing:4px;}
+.foot-r{font-size:10px;color:var(--muted);letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">XAVOV</span>
+  <div class="nav-path">
+    <span>المتجر</span>
+    <span class="nav-path-sep">·</span>
+    <span>جناح A</span>
+    <span class="nav-path-sep">·</span>
+    <span>اللابتوبات</span>
+    <span class="nav-path-sep">·</span>
+    <span class="nav-path-cur">عرض المنتج</span>
+  </div>
+  <a href="xa-store.html" class="nav-back">→ العودة للمتجر</a>
+</nav>
+
+<!-- LAYER INDICATOR -->
+<div class="layer-indicator">
+  <div class="layer-dot active" data-label="IDENTITY" onclick="scrollToLayer(1)"></div>
+  <div class="layer-line"></div>
+  <div class="layer-dot" data-label="VISUAL" onclick="scrollToLayer(2)"></div>
+  <div class="layer-line"></div>
+  <div class="layer-dot" data-label="INSPECTION" onclick="scrollToLayer(3)"></div>
+  <div class="layer-line"></div>
+  <div class="layer-dot" data-label="TRUST" onclick="scrollToLayer(4)"></div>
+  <div class="layer-line"></div>
+  <div class="layer-dot" data-label="PURCHASE" onclick="scrollToLayer(5)"></div>
+</div>
+
+<div class="product-page">
+
+  <!-- PHASE BAR -->
+  <div style="padding:80px 80px 0;">
+    <div class="phase-bar">
+      <div class="phase-item active"><div class="phase-num">01</div><div class="phase-name">الهوية</div></div>
+      <div class="phase-item"><div class="phase-num">02</div><div class="phase-name">العرض البصري</div></div>
+      <div class="phase-item"><div class="phase-num">03</div><div class="phase-name">الفحص التقني</div></div>
+      <div class="phase-item"><div class="phase-num">04</div><div class="phase-name">الثقة والتحقق</div></div>
+      <div class="phase-item"><div class="phase-num">05</div><div class="phase-name">الشراء</div></div>
+    </div>
+  </div>
+
+  <!-- ═══ LAYER 1 — IDENTITY ═══ -->
+  <div class="layer layer-1" id="layer-1">
+    <div class="layer-num">01</div>
+    <div class="layer-tag"><div class="layer-tag-dot"></div>LAYER ONE · هوية المنتج</div>
+    <div class="l1-grid">
+      <div class="l1-left">
+        <div class="l1-codes">
+          <div class="l1-code">A2 · 1500</div>
+          <div class="l1-type type-original">أصلي · ORIGINAL</div>
+        </div>
+        <h1 class="l1-name">لابتوب MacBook Pro M3</h1>
+        <p class="l1-name-en">Apple MacBook Pro M3 — 14 inch</p>
+        <div class="l1-divider"></div>
+        <p class="l1-summary">لابتوب احترافي من Apple بمعالج M3 الجديد — مفحوص ومعتمد من قِبل XAVOV. أداء استثنائي مع بطارية تدوم حتى 18 ساعة. متوفر بضمان سنة كاملة.</p>
+      </div>
+      <div class="l1-right">
+        <div class="l1-price-lbl">السعر الإجمالي</div>
+        <div class="l1-price">4,299</div>
+        <div class="l1-price-cur">ريال سعودي · SAR</div>
+        <div class="l1-price-compare">
+          <span class="l1-compare-lbl">السعر الأصلي</span>
+          <span class="l1-compare-val">5,800 SAR</span>
+          <span class="l1-compare-save">وفّر 26%</span>
+        </div>
+        <div class="l1-status-row">
+          <div class="status-dot"></div>
+          <span class="l1-status-txt">متاح — 3 وحدات متبقية</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LAYER 2 — VISUAL ═══ -->
+  <div class="layer layer-2" id="layer-2">
+    <div class="layer-num">02</div>
+    <div class="layer-tag"><div class="layer-tag-dot"></div>LAYER TWO · العرض البصري</div>
+    <div class="l2-grid">
+
+      <div class="l2-thumbs">
+        <div class="l2-thumb active">
+          <div class="l2-thumb-inner"><span class="l2-thumb-lbl">FRONT</span></div>
+        </div>
+        <div class="l2-thumb">
+          <div class="l2-thumb-inner"><span class="l2-thumb-lbl">BACK</span></div>
+        </div>
+        <div class="l2-thumb">
+          <div class="l2-thumb-inner"><span class="l2-thumb-lbl">SIDE</span></div>
+        </div>
+        <div class="l2-thumb">
+          <div class="l2-thumb-inner"><span class="l2-thumb-lbl">PORT</span></div>
+        </div>
+        <div class="l2-thumb">
+          <div class="l2-thumb-inner"><span class="l2-thumb-lbl">OPEN</span></div>
+        </div>
+      </div>
+
+      <div class="l2-main">
+        <div class="l2-main-bg"></div>
+        <div class="l2-corner tl"></div>
+        <div class="l2-corner tr"></div>
+        <div class="l2-corner bl"></div>
+        <div class="l2-corner br"></div>
+        <div class="l2-main-placeholder">
+          <div class="l2-main-ico">◻</div>
+          <div class="l2-main-lbl">PRODUCT IMAGE AREA</div>
+        </div>
+        <div class="l2-view-badge">REAL VIEW · المنظر الحقيقي</div>
+      </div>
+
+      <div class="l2-info">
+        <div class="l2-info-card">
+          <div class="l2-info-lbl">نوع العرض</div>
+          <div class="l2-info-val">المنظر الحقيقي</div>
+          <div class="l2-info-sub">Real View</div>
+        </div>
+        <div class="l2-info-card">
+          <div class="l2-info-lbl">عدد الصور</div>
+          <div class="l2-info-val">12 صورة</div>
+          <div class="l2-info-sub">High Resolution</div>
+        </div>
+        <div class="l2-info-card">
+          <div class="l2-info-lbl">حالة التوثيق</div>
+          <div class="l2-info-val" style="color:#2ECC71;">موثق ✓</div>
+          <div class="l2-info-sub">XA Verified</div>
+        </div>
+        <div class="l2-views-row">
+          <div class="l2-view-btn active">حقيقي</div>
+          <div class="l2-view-btn">X-Ray</div>
+          <div class="l2-view-btn">تفكيك</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ LAYER 3 — INSPECTION ═══ -->
+  <div class="layer layer-3" id="layer-3">
+    <div class="layer-num">03</div>
+    <div class="layer-tag"><div class="layer-tag-dot"></div>LAYER THREE · الفحص التقني</div>
+    <div class="l3-grid">
+      <div class="l3-card">
+        <div class="l3-card-title">المواصفات الأساسية</div>
+        <div class="l3-spec"><span class="l3-spec-key">المعالج</span><span class="l3-spec-val">Apple M3 — 8 Core</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">الذاكرة</span><span class="l3-spec-val">16GB Unified RAM</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">التخزين</span><span class="l3-spec-val">512GB SSD NVMe</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">الشاشة</span><span class="l3-spec-val">14.2" Liquid Retina XDR</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">البطارية</span><span class="l3-spec-val">حتى 18 ساعة</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">نظام التشغيل</span><span class="l3-spec-val">macOS Sonoma</span></div>
+      </div>
+      <div class="l3-card">
+        <div class="l3-card-title">تفاصيل إضافية</div>
+        <div class="l3-spec"><span class="l3-spec-key">اللون</span><span class="l3-spec-val">Space Black</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">الوزن</span><span class="l3-spec-val">1.61 كيلوغرام</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">المنافذ</span><span class="l3-spec-val">3× Thunderbolt 4 · HDMI · MagSafe</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">الكاميرا</span><span class="l3-spec-val">1080p FaceTime HD</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">الاتصال</span><span class="l3-spec-val">Wi-Fi 6E · Bluetooth 5.3</span></div>
+        <div class="l3-spec"><span class="l3-spec-key">رقم الموديل</span><span class="l3-spec-val">MRX33AB/A</span></div>
+      </div>
+    </div>
+
+    <div class="l3-condition">
+      <div class="l3-condition-title">تقرير الحالة</div>
+      <div class="l3-meter">
+        <div class="l3-meter-lbl"><span class="l3-meter-key">حالة الهيكل</span><span class="l3-meter-val">95%</span></div>
+        <div class="l3-meter-bar"><div class="l3-meter-fill" style="width:95%"></div></div>
+      </div>
+      <div class="l3-meter">
+        <div class="l3-meter-lbl"><span class="l3-meter-key">حالة الشاشة</span><span class="l3-meter-val">98%</span></div>
+        <div class="l3-meter-bar"><div class="l3-meter-fill" style="width:98%"></div></div>
+      </div>
+      <div class="l3-meter">
+        <div class="l3-meter-lbl"><span class="l3-meter-key">صحة البطارية</span><span class="l3-meter-val">91%</span></div>
+        <div class="l3-meter-bar"><div class="l3-meter-fill" style="width:91%"></div></div>
+      </div>
+      <div class="l3-meter">
+        <div class="l3-meter-lbl"><span class="l3-meter-key">أداء المعالج</span><span class="l3-meter-val">100%</span></div>
+        <div class="l3-meter-bar"><div class="l3-meter-fill" style="width:100%"></div></div>
+      </div>
+      <div class="l3-note">
+        <div class="l3-note-lbl">ملاحظة الفاحص</div>
+        <div class="l3-note-txt">الجهاز في حالة ممتازة — لا يوجد أي خدوش ظاهرة. تم الفحص الكامل بتاريخ 10/10/1447 وأُقر للبيع داخل XAVOV.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LAYER 4 — TRUST ═══ -->
+  <div class="layer layer-4" id="layer-4">
+    <div class="layer-num">04</div>
+    <div class="layer-tag"><div class="layer-tag-dot"></div>LAYER FOUR · الثقة والتحقق</div>
+    <div class="l4-grid">
+      <div class="trust-card">
+        <span class="trust-ico">✓</span>
+        <div class="trust-status trust-verified">معتمد XAVOV</div>
+        <div class="trust-title">فحص XAVOV</div>
+        <div class="trust-sub">فُحص هذا المنتج وأُقر من فريق XAVOV قبل النشر</div>
+      </div>
+      <div class="trust-card">
+        <span class="trust-ico">⬡</span>
+        <div class="trust-status trust-active">ساري المفعول</div>
+        <div class="trust-title">ضمان المنتج</div>
+        <div class="trust-sub">ضمان سنة كاملة — قابل للتمديد</div>
+      </div>
+      <div class="trust-card">
+        <span class="trust-ico">◎</span>
+        <div class="trust-status trust-verified">موثق</div>
+        <div class="trust-title">توثيق XAVOV</div>
+        <div class="trust-sub">مورد معتمد ومُدقق من فريق XAVOV</div>
+      </div>
+    </div>
+
+    <div class="l4-serial">
+      <div class="l4-serial-title">الكود التسلسلي الداخلي · INTERNAL REFERENCE</div>
+      <div class="l4-serial-code">A-A2-1500-K2376H-01</div>
+      <div class="l4-serial-note">
+        <div class="l4-serial-dot"></div>
+        هذا الكود خاص بهذه الوحدة فقط — يُستخدم في حالات الإرجاع والضمان
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ LAYER 5 — PURCHASE ═══ -->
+  <div class="layer layer-5" id="layer-5">
+    <div class="layer-num">05</div>
+    <div class="layer-tag"><div class="layer-tag-dot"></div>LAYER FIVE · الشراء</div>
+    <div class="l5-grid">
+
+      <div class="l5-left">
+        <div class="l5-summary-title">ملخص الطلب · ORDER SUMMARY</div>
+        <div class="l5-summary-items">
+          <div class="l5-sum-item"><span class="l5-sum-key">المنتج</span><span class="l5-sum-val">MacBook Pro M3 14"</span></div>
+          <div class="l5-sum-item"><span class="l5-sum-key">الجناح · النافذة</span><span class="l5-sum-val">A · A2</span></div>
+          <div class="l5-sum-item"><span class="l5-sum-key">النوع</span><span class="l5-sum-val">أصلي · ORIGINAL</span></div>
+          <div class="l5-sum-item"><span class="l5-sum-key">الحالة</span><span class="l5-sum-val">ممتازة — 95%+</span></div>
+          <div class="l5-sum-item"><span class="l5-sum-key">الضمان</span><span class="l5-sum-val">12 شهر</span></div>
+          <div class="l5-sum-item"><span class="l5-sum-key">سعر الوحدة</span><span class="l5-sum-val gold">4,299 SAR</span></div>
+        </div>
+
+        <div class="l5-action-row">
+          <div class="l5-action-btn">⬡ &nbsp; حفظ للمقارنة</div>
+          <div class="l5-action-btn">◎ &nbsp; إضافة للمفضلة</div>
+          <div class="l5-action-btn">⊹ &nbsp; مشاركة</div>
+        </div>
+      </div>
+
+      <div class="l5-right">
+        <div class="l5-buy-card">
+          <div class="l5-buy-accent"></div>
+
+          <div class="l5-qty-lbl">الكمية · QUANTITY</div>
+          <div class="l5-qty-row">
+            <button class="l5-qty-btn" onclick="changeQty(-1)">−</button>
+            <input class="l5-qty-val" id="qty" value="1" readonly>
+            <button class="l5-qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+
+          <div class="l5-total-lbl">الإجمالي · TOTAL</div>
+          <div class="l5-total" id="total">4,299</div>
+          <div class="l5-total-cur">ريال سعودي · SAR</div>
+
+          <button class="l5-cart-btn">إضافة للسلة ← Add to Cart</button>
+          <button class="l5-save-btn">⬡ &nbsp; حفظ للطلب لاحقاً</button>
+
+          <div class="l5-guarantee">
+            <span class="l5-guarantee-ico">✓</span>
+            <span class="l5-guarantee-txt">مضمون بواسطة XAVOV — حق الإرجاع خلال 5 أيام من الاستلام</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span class="foot-logo">XAVOV</span>
+  <span class="foot-r">عرض المنتج · Five-Layer Display · XA STORE</span>
+</footer>
+
+<script>
+// Quantity logic
+let qty = 1;
+const price = 4299;
+function changeQty(n){
+  qty = Math.max(1, Math.min(10, qty + n));
+  document.getElementById('qty').value = qty;
+  document.getElementById('total').textContent = (qty * price).toLocaleString('ar-SA');
+}
+
+// Layer scroll
+function scrollToLayer(n){
+  document.getElementById('layer-'+n).scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Update active layer dot on scroll
+const layers = [1,2,3,4,5];
+window.addEventListener('scroll', () => {
+  layers.forEach(n => {
+    const el = document.getElementById('layer-'+n);
+    if(!el) return;
+    const rect = el.getBoundingClientRect();
+    const dots = document.querySelectorAll('.layer-dot');
+    if(rect.top <= 200 && rect.bottom >= 200){
+      dots.forEach(d => d.classList.remove('active'));
+      dots[n-1].classList.add('active');
+    }
+  });
+});
+
+// Phase bar click
+document.querySelectorAll('.phase-item').forEach((item, i) => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.phase-item').forEach(p => p.classList.remove('active'));
+    item.classList.add('active');
+    scrollToLayer(i+1);
+  });
+});
+</script>
+</body>
+</html>

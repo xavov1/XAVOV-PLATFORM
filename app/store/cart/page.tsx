@@ -45,8 +45,8 @@ export default function CartPage() {
           <span style={{margin:"0 10px"}}>{item.qty}</span>
           <button onClick={() => changeQty(item.id, 1)}>+</button>
 
-          <button 
-            onClick={() => removeItem(item.id)} 
+          <button
+            onClick={() => removeItem(item.id)}
             style={{marginLeft:10, background:"red", color:"white"}}
           >
             حذف

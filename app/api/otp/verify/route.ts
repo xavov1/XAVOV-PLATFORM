@@ -12,8 +12,8 @@ export async function POST(req: Request) {
       )
     }
 
-    // ✅ تحقق من الكود (6 أرقام)
-    if (typeof code !== 'string' || !/^\d{6}$/.test(code)) {
+    // ✅ تحقق من الكود (4 أرقام)
+    if (typeof code !== 'string' || !/^\d{4}$/.test(code)) {
       return NextResponse.json(
         { success: false, error: 'رمز غير صحيح' },
         { status: 400 }
@@ -28,27 +28,18 @@ export async function POST(req: Request) {
       )
     }
 
-    const record = globalThis.otpStore.get(contact)
+    const stored = globalThis.otpStore[contact]
 
     // ❌ ما فيه كود
-    if (!record) {
+    if (!stored) {
       return NextResponse.json(
         { success: false, error: 'لم يتم العثور على رمز' },
         { status: 404 }
       )
     }
 
-    // ⏳ انتهت الصلاحية
-    if (new Date() > record.expiresAt) {
-      globalThis.otpStore.delete(contact)
-      return NextResponse.json(
-        { success: false, error: 'انتهت صلاحية الرمز' },
-        { status: 410 }
-      )
-    }
-
     // ❌ كود غلط
-    if (record.code !== code) {
+    if (stored !== code) {
       return NextResponse.json(
         { success: false, error: 'رمز غير صحيح' },
         { status: 401 }
@@ -56,7 +47,7 @@ export async function POST(req: Request) {
     }
 
     // ✅ نجاح — احذف الكود
-    globalThis.otpStore.delete(contact)
+    delete globalThis.otpStore[contact]
 
     return NextResponse.json({
       success: true,

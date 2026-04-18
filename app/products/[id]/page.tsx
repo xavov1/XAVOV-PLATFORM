@@ -1,43 +1,38 @@
-import ProductViewer from "@/app/components/ProductViewer"
+'use client'
 
-const PRODUCTS:any = {
-  ww90:{
-    name:"غسالة سامسونج AddWash",
-    en:"Samsung AddWash Washer",
-    price:2199
-  },
+import { useEffect, useState } from 'react'
+import { useParams } from 'next/navigation'
+import ProductViewer from '@/app/components/ProductViewer'
 
-  lg100:{
-    name:"غسالة LG",
-    en:"LG Washer",
-    price:1999
-  }
-}
+export default function ProductPage() {
+  const params            = useParams()
+  const id                = params?.id as string
+  const [product, setProduct] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
-export default async function Page({params}:any){
+  useEffect(() => {
+    if (!id) return
+    fetch(`/api/products/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        console.log('PRODUCTS FROM DB:', data)
+        setProduct(data?.error ? null : data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error('PRODUCT FETCH ERROR:', err)
+        setLoading(false)
+      })
+  }, [id])
 
-  const { id } = await params
-
-  const product = PRODUCTS[id]
-
-  if(!product){
-    return <div style={{padding:40}}>المنتج غير موجود</div>
-  }
+  if (loading)  return <div style={{ padding: 40 }}>جارٍ التحميل...</div>
+  if (!product) return <div style={{ padding: 40 }}>المنتج غير موجود</div>
 
   return (
-
-    <div style={{padding:40}}>
-
+    <div style={{ padding: 40 }}>
       <h1>{product.name}</h1>
-
-      <h2>{product.en}</h2>
-
       <p>السعر: {product.price} ريال</p>
-
-      <ProductViewer product={product}/>
-
+      <ProductViewer product={product} />
     </div>
-
   )
-
 }

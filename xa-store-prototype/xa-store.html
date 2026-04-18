@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XA STORE — XAVOV</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Cairo:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#C9A84C;--gold-light:#E8C97A;
+  --gold-dim:rgba(201,168,76,0.12);
+  --gold-b:rgba(201,168,76,0.16);
+  --gold-b2:rgba(201,168,76,0.35);
+  --bg:#02040A;--bg2:#04060D;
+  --surface:#080D18;--surface2:#0B1020;--surface3:#0E1428;
+  --text:#EDE5D5;--text2:#B5AC9C;--muted:#524C44;
+  --red:#8B1A1A;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity:0.022;mix-blend-mode:overlay;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:999;height:68px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 60px;
+  background:rgba(2,4,10,0.92);border-bottom:1px solid var(--gold-b);backdrop-filter:blur(24px);}
+.nav-logo{display:flex;flex-direction:column;align-items:flex-end;gap:1px;}
+.nav-logo-main{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);letter-spacing:6px;font-weight:600;line-height:1;}
+.nav-logo-sub{font-size:8px;letter-spacing:4px;color:rgba(201,168,76,0.35);font-family:'Cormorant Garamond',serif;}
+.nav-back{font-size:12px;color:var(--muted);letter-spacing:1px;transition:color 0.2s;display:flex;align-items:center;gap:8px;}
+.nav-back:hover{color:var(--text);}
+
+/* STORE HERO */
+.store-hero{
+  padding:120px 60px 80px;text-align:center;
+  background:radial-gradient(ellipse 65% 55% at 50% 40%,rgba(201,168,76,0.05) 0%,transparent 65%);
+  position:relative;
+}
+.store-hero-eye{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:7px;color:rgba(201,168,76,0.45);margin-bottom:20px;}
+.store-hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(56px,8vw,100px);color:var(--gold);font-weight:300;letter-spacing:10px;line-height:0.95;margin-bottom:12px;text-shadow:0 0 80px rgba(201,168,76,0.1);}
+.store-hero-sub{font-size:14px;color:var(--muted);letter-spacing:1px;margin-bottom:36px;}
+.store-hero-orn{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:0;}
+.orn-l{width:56px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.orn-l.r{background:linear-gradient(90deg,var(--gold),transparent);}
+.orn-d{width:4px;height:4px;background:var(--gold);border-radius:50%;opacity:0.45;}
+
+/* SECTION COMMONS */
+.sec{padding:80px 60px;position:relative;z-index:1;}
+.sec-lbl{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:6px;color:rgba(201,168,76,0.45);text-align:center;margin-bottom:10px;}
+.sec-ttl{font-size:clamp(22px,2.8vw,34px);font-weight:700;text-align:center;margin-bottom:14px;letter-spacing:0.5px;}
+.sec-orn{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:56px;}
+.so-l{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold));}
+.so-l.r{background:linear-gradient(90deg,var(--gold),transparent);}
+.so-d{width:5px;height:5px;background:var(--gold);transform:rotate(45deg);opacity:0.5;}
+
+/* ═══════════ MAIN CARDS GRID ═══════════ */
+.main-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  max-width:1140px;margin:0 auto;
+  background:var(--gold-b);
+  border:1px solid var(--gold-b);
+}
+
+/* Wings — full width top */
+.mc-wings{grid-column:1/-1;}
+
+/* Bottom row — 3 cards */
+.mc-bottom{
+  grid-column:1/-1;
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  gap:1px;background:var(--gold-b);
+}
+
+.main-card{
+  background:var(--surface);
+  padding:48px 44px;
+  position:relative;overflow:hidden;
+  transition:background 0.3s;
+  cursor:pointer;
+}
+.main-card:hover{background:var(--surface2);}
+.main-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(201,168,76,0.05) 0%,transparent 65%);
+  opacity:0;transition:opacity 0.35s;pointer-events:none;
+}
+.main-card:hover::before{opacity:1;}
+
+/* Card accent top line */
+.card-accent{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:0.4;position:absolute;top:0;left:0;right:0;}
+
+/* Card header */
+.card-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.card-id{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:5px;color:rgba(201,168,76,0.35);}
+.card-ico{
+  width:44px;height:44px;border:1px solid var(--gold-b);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);opacity:0.6;
+}
+
+/* Card content */
+.card-name{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,42px);color:var(--gold);font-weight:300;letter-spacing:3px;line-height:1;margin-bottom:4px;}
+.card-name-ar{font-size:20px;font-weight:700;margin-bottom:5px;letter-spacing:0.3px;}
+.card-name-en{font-family:'Cormorant Garamond',serif;font-size:11px;color:var(--muted);font-style:italic;letter-spacing:2px;margin-bottom:20px;}
+.card-div{height:1px;background:linear-gradient(90deg,var(--gold-b2),transparent);margin-bottom:20px;}
+.card-desc{font-size:13px;color:var(--muted);line-height:1.85;margin-bottom:28px;max-width:520px;}
+
+/* Wings layout — horizontal */
+.mc-wings .card-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+.mc-wings .card-desc{max-width:100%;}
+.wings-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.wing-mini{
+  border:1px solid var(--gold-b);background:var(--surface2);
+  padding:14px 16px;
+  transition:border-color 0.25s,background 0.25s;cursor:pointer;
+}
+.wing-mini:hover{border-color:var(--gold-b2);background:var(--surface3);}
+.wing-mini-ltr{font-family:'Cormorant Garamond',serif;font-size:26px;color:var(--gold);font-weight:300;line-height:1;margin-bottom:2px;}
+.wing-mini-num{font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:4px;}
+.wing-mini-name{font-size:11px;color:var(--text2);font-weight:600;}
+
+/* Memberships layout */
+.mem-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:28px;}
+.mem-mini{border:1px solid var(--gold-b);background:var(--surface2);padding:16px 14px;text-align:center;transition:border-color 0.25s;}
+.mem-mini:hover{border-color:var(--gold-b2);}
+.mem-mini-ico{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--gold);margin-bottom:6px;display:block;}
+.mem-mini-name{font-size:11px;font-weight:700;margin-bottom:2px;}
+.mem-mini-badge{font-size:9px;letter-spacing:1.5px;color:var(--muted);}
+.mem-elite .mem-mini-name{color:var(--gold);}
+
+/* Auctions */
+.auc-live{display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;}
+.auc-live-dot{width:5px;height:5px;background:#C0392B;border-radius:50%;animation:blink 1.6s infinite;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(192,57,43,0.5);}50%{opacity:0.6;box-shadow:0 0 0 5px rgba(192,57,43,0);}}
+.auc-live-txt{font-size:9px;letter-spacing:4px;color:#C0392B;font-family:'Cormorant Garamond',serif;}
+.auc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:28px;}
+.auc-stat{border:1px solid var(--gold-b);background:var(--surface2);padding:14px 16px;}
+.auc-stat-num{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--gold);font-weight:300;margin-bottom:2px;}
+.auc-stat-lbl{font-size:10px;color:var(--muted);letter-spacing:1px;}
+
+/* BUTTONS */
+.card-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:12px 24px;
+  border:1px solid var(--gold);color:var(--gold);
+  font-size:12.5px;font-family:'Cairo',sans-serif;letter-spacing:0.5px;
+  background:transparent;cursor:pointer;
+  transition:background 0.25s,color 0.25s;
+}
+.card-btn:hover{background:var(--gold);color:var(--bg);}
+.card-btn-arr{transition:transform 0.25s;}
+.card-btn:hover .card-btn-arr{transform:translateX(-4px);}
+
+/* LOCKED CARDS */
+.main-card.locked{cursor:not-allowed;}
+.main-card.locked:hover{background:var(--surface);}
+.main-card.locked:hover::before{opacity:0;}
+.locked-overlay{
+  position:absolute;inset:0;z-index:10;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(2,4,10,0.65);backdrop-filter:blur(4px);
+}
+.locked-ico{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--gold);opacity:0.45;margin-bottom:10px;line-height:1;}
+.locked-status{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);letter-spacing:4px;font-weight:600;margin-bottom:4px;}
+.locked-soon{font-size:9px;color:var(--muted);letter-spacing:4px;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--gold-b);padding:32px 60px;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1;}
+.foot-logo{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);letter-spacing:5px;}
+.foot-right{font-size:10px;letter-spacing:1px;color:var(--muted);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="nav-logo-main">XAVOV</span>
+    <span class="nav-logo-sub">XA STORE</span>
+  </div>
+  <a href="xa-landing-v2.html" class="nav-back">→ الرئيسية</a>
+</nav>
+
+<!-- STORE HERO -->
+<div class="store-hero">
+  <p class="store-hero-eye">XAVOV · XA STORE</p>
+  <h1 class="store-hero-title">XA STORE</h1>
+  <p class="store-hero-sub">اختر وجهتك داخل المتجر</p>
+  <div class="store-hero-orn">
+    <div class="orn-l"></div><div class="orn-d"></div><div class="orn-l r"></div>
+  </div>
+</div>
+
+<!-- MAIN SECTION -->
+<section class="sec">
+  <p class="sec-lbl">EXPLORE THE STORE</p>
+  <h2 class="sec-ttl">أقسام المتجر</h2>
+  <div class="sec-orn"><div class="so-l"></div><div class="so-d"></div><div class="so-l r"></div></div>
+
+  <div class="main-grid">
+
+    <!-- ═══ WINGS ═══ -->
+    <a href="xa-store.html" class="main-card mc-wings">
+      <div class="card-accent"></div>
+      <div class="card-inner" style="display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;">
+        <div>
+          <div class="card-hdr">
+            <span class="card-id">SECTION · 01</span>
+            <div class="card-ico">⊹</div>
+          </div>
+          <div class="card-name">WINGS</div>
+          <div class="card-name-ar">الأجنحة</div>
+          <div class="card-name-en">Specialized Shopping Wings</div>
+          <div class="card-div"></div>
+          <p class="card-desc">6 أجنحة متخصصة، 32 نافذة — تصفح واكتشف منتجات مفحوصة ومصنفة من أفضل الموردين حول العالم</p>
+          <div class="card-btn" style="max-width:260px;">تصفح الأجنحة <span class="card-btn-arr">←</span></div>
+        </div>
+        <div class="wings-mini-grid">
+          <div class="wing-mini"><div class="wing-mini-ltr">A</div><div class="wing-mini-num">1500</div><div class="wing-mini-name">الأجهزة الذكية</div></div>
+          <div class="wing-mini"><div class="wing-mini-ltr">B</div><div class="wing-mini-num">1600</div><div class="wing-mini-name">الأجهزة المنزلية</div></div>
+          <div class="wing-mini"><div class="wing-mini-ltr">C</div><div class="wing-mini-num">1700</div><div class="wing-mini-name">الزراعي والصناعي</div></div>
+          <div class="wing-mini"><div class="wing-mini-ltr">D</div><div class="wing-mini-num">1800</div><div class="wing-mini-name">الإلكترونيات</div></div>
+          <div class="wing-mini"><div class="wing-mini-ltr">G</div><div class="wing-mini-num">1900</div><div class="wing-mini-name">الألعاب والترفيه</div></div>
+          <div class="wing-mini"><div class="wing-mini-ltr">F</div><div class="wing-mini-num">2000</div><div class="wing-mini-name">قطع السيارات</div></div>
+        </div>
+      </div>
+    </a>
+
+    <!-- BOTTOM ROW -->
+    <div class="mc-bottom">
+
+      <!-- ═══ MEMBERSHIPS ═══ -->
+      <div class="main-card">
+        <div class="card-accent"></div>
+        <div class="card-hdr">
+          <span class="card-id">SECTION · 02</span>
+          <div class="card-ico">♛</div>
+        </div>
+        <div class="card-name">MEMBERSHIPS</div>
+        <div class="card-name-ar">العضويات</div>
+        <div class="card-name-en">Exclusive Tiers</div>
+        <div class="card-div"></div>
+        <div class="mem-mini-grid">
+          <div class="mem-mini">
+            <span class="mem-mini-ico">◎</span>
+            <div class="mem-mini-name">Standard</div>
+            <div class="mem-mini-badge">مجاني</div>
+          </div>
+          <div class="mem-mini">
+            <span class="mem-mini-ico">✦</span>
+            <div class="mem-mini-name">Premium</div>
+            <div class="mem-mini-badge">مدفوع</div>
+          </div>
+          <div class="mem-mini mem-elite">
+            <span class="mem-mini-ico">♛</span>
+            <div class="mem-mini-name">Elite</div>
+            <div class="mem-mini-badge" style="color:rgba(201,168,76,0.5);">دعوة</div>
+          </div>
+        </div>
+        <div class="card-btn">اختر عضويتك <span class="card-btn-arr">←</span></div>
+      </div>
+
+      <!-- ═══ AUCTIONS ═══ -->
+      <div class="main-card">
+        <div class="card-accent"></div>
+        <div class="card-hdr">
+          <span class="card-id">SECTION · 03</span>
+          <div class="card-ico" style="border-color:rgba(192,57,43,0.3);color:#C0392B;">⬡</div>
+        </div>
+        <div class="auc-live">
+          <span class="auc-live-dot"></span>
+          <span class="auc-live-txt">LIVE AUCTIONS</span>
+        </div>
+        <div class="card-name" style="color:#C0392B;opacity:0.8;">AUCTIONS</div>
+        <div class="card-name-ar">المزادات</div>
+        <div class="card-name-en">Live 60-Minute Auctions</div>
+        <div class="card-div"></div>
+        <div class="auc-stats">
+          <div class="auc-stat">
+            <div class="auc-stat-num">60</div>
+            <div class="auc-stat-lbl">دقيقة لكل مزاد</div>
+          </div>
+          <div class="auc-stat">
+            <div class="auc-stat-num">3</div>
+            <div class="auc-stat-lbl">أنواع دخول</div>
+          </div>
+        </div>
+        <div class="card-btn" style="border-color:#8B1A1A;color:#C0392B;" onmouseover="this.style.background='#8B1A1A';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='#C0392B'">دخول المزاد <span class="card-btn-arr">←</span></div>
+      </div>
+
+      <!-- ═══ HARAJ — LOCKED ═══ -->
+      <div class="main-card locked">
+        <div class="card-accent"></div>
+        <div class="card-hdr">
+          <span class="card-id">SECTION · 04</span>
+          <div class="card-ico">◈</div>
+        </div>
+        <div class="card-name">HARAJ</div>
+        <div class="card-name-ar">الحراج</div>
+        <div class="card-name-en">Open Marketplace</div>
+        <div class="card-div"></div>
+        <p class="card-desc">تسوّق منتجات مستعملة ومجددة بأسعار تنافسية — سوق مفتوح داخل XAVOV</p>
+        <div class="locked-overlay">
+          <div class="locked-ico">◈</div>
+          <div class="locked-status">قريباً</div>
+          <div class="locked-soon">COMING SOON</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ BOURSE — LOCKED — full width ═══ -->
+    <div class="main-card locked" style="grid-column:1/-1;padding:52px 56px;">
+      <div class="card-accent"></div>
+      <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:40px;filter:blur(1px);opacity:0.3;">
+        <div>
+          <div class="card-hdr" style="margin-bottom:16px;">
+            <span class="card-id">SECTION · 05</span>
+          </div>
+          <div class="card-name">BOURSE</div>
+          <div class="card-name-ar">البورصة</div>
+          <div class="card-name-en">Wings Exchange Market</div>
+          <div class="card-div" style="margin-top:16px;"></div>
+          <p class="card-desc">سوق تداول حصص الأجنحة بين المستثمرين — منظومة مالية حصرية داخل XAVOV</p>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:80px;color:var(--gold);font-weight:300;opacity:0.15;letter-spacing:6px;">B</div>
+      </div>
+      <div class="locked-overlay">
+        <div class="locked-ico">⬡</div>
+        <div class="locked-status">مغلقة حالياً</div>
+        <div class="locked-soon">COMING SOON · WINGS EXCHANGE</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="foot-logo">XAVOV</span>
+  <span class="foot-right">XA STORE · جميع الحقوق محفوظة © 2025</span>
+</footer>
+
+</body>
+</html>

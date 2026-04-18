@@ -1,27 +1,22 @@
-import { prisma } from "../lib/prisma";
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient()
 
 async function main() {
-  await prisma.user.createMany({
+  await prisma.product.createMany({
     data: [
-      {
-        name: "Adel",
-        email: "adel@xavov.com",
-      },
-      {
-        name: "XAVOV Admin",
-        email: "admin@xavov.com",
-      },
+      { name: 'Gaming PC',      price: 4999 },
+      { name: 'Xbox Series X',  price: 2299 },
+      { name: 'ثلاجة سامسونج', price: 2800 },
+      { name: 'تلفزيون LG',     price: 3199 },
+      { name: 'غسالة سامسونج', price: 2100 },
+      { name: 'MacBook Pro M3', price: 4299 },
     ],
-  });
-
-  console.log("✅ Seed data inserted");
+    skipDuplicates: true,
+  })
+  console.log('✅ Products seeded')
 }
 
 main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+  .catch(e => { console.error(e); process.exit(1) })
+  .finally(async () => { await prisma.$disconnect() })
